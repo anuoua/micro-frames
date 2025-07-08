@@ -125,7 +125,7 @@ export const hack = (props: InitOptions) => {
 
   history.go = (delta) => {
     const ctx = context.getContextValue();
-    originalGo(delta);
+    originalGo(delta!);
     ctx?.silent === false && Nav.functions.go(delta);
   };
 

@@ -1,14 +1,39 @@
 {
   "name": "@micro-frames/core",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.0.0",
+  "description": "Iframe based micro front end framework",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc --project tsconfig.json"
   },
   "keywords": [],
-  "author": "",
+  "author": "anuoua",
   "license": "MIT",
+  "type": "module",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "exports": {
+    "./main-frame": {
+      "import": "./dist/main-frame/index.js",
+      "types": "./dist/main-frame/index.d.ts"
+    },
+    "./module-frame": {
+      "import": "./dist/module-frame/index.js",
+      "types": "./dist/module-frame/index.d.ts"
+    },
+    "./history-pro": {
+      "import": "./dist/history-pro/index.js",
+      "types": "./dist/history-pro/index.d.ts"
+    },
+    "./protocol": {
+      "import": "./dist/protocol/index.js",
+      "types": "./dist/protocol/index.d.ts"
+    },
+    "./utils/*": {
+      "import": "./dist/utils/*.js"
+    }
+  },
   "packageManager": "pnpm@10.11.0",
   "dependencies": {
     "framebus": "^6.0.3"

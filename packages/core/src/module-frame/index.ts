@@ -1,5 +1,11 @@
 import { HistoryPro } from "../history-pro";
-import { Frame, LocalStore, SessionStore, CookieStore2 } from "../protocol";
+import {
+  Frame,
+  LocalStore,
+  SessionStore,
+  CookieStore2,
+  MemoryStore,
+} from "../protocol";
 import { getFullPath } from "../utils/getFullPath";
 import { CURRENT_KEY, hack, InitOptions, STACK_KEYS } from "./nav";
 
@@ -16,6 +22,11 @@ export const sessionStore = {
 export const cookieStore2 = {
   ...CookieStore2.functions,
   $on: CookieStore2.on,
+};
+
+export const memoryStore = {
+  ...MemoryStore.functions,
+  $on: MemoryStore.on,
 };
 
 export const frame = {

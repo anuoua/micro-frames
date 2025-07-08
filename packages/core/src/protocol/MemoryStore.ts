@@ -3,8 +3,10 @@ import { createFunctions } from "../utils/createFunctions";
 import { createBroadcasts } from "../utils/createBroadcasts";
 
 const framebus = new Framebus({
-  channel: "MCF::SessionStore",
+  channel: "MCF::MemoryStore",
 });
+
+const store: Record<string, string> = {};
 
 export const { broadcast, on } = createBroadcasts<{
   storage: {
@@ -15,43 +17,55 @@ export const { broadcast, on } = createBroadcasts<{
 }>(framebus);
 
 export const { registFunctions, functions } = createFunctions(framebus, {
+  getAll: () => {
+    return { ...store }; // Return a shallow copy of the store
+  },
+
   setItem: (key: string, value: string) => {
-    value !== sessionStorage.getItem(key) &&
+    const oldValue = store[key] || null;
+    store[key] = value;
+    value !== oldValue &&
       broadcast("storage", {
         key: key,
         newValue: value,
-        oldValue: sessionStorage.getItem(key),
+        oldValue: oldValue,
       });
-    return sessionStorage.setItem(key, value);
+    return value; // Return the new value
   },
 
   getItem: (key: string) => {
-    return sessionStorage.getItem(key);
+    return store[key] || null; // Return null if the key does not exist
   },
 
   removeItem: (key: string) => {
+    const oldValue = store[key] || null;
+    delete store[key];
     broadcast("storage", {
       key: key,
       newValue: null,
-      oldValue: sessionStorage.getItem(key),
+      oldValue: oldValue,
     });
-    return sessionStorage.removeItem(key);
+    return oldValue; // Return the removed value
   },
 
   clear: () => {
+    for (const key in store) {
+      delete store[key];
+    }
     broadcast("storage", {
       key: null,
       newValue: null,
       oldValue: null,
     });
-    return sessionStorage.clear();
+    return; // Clear does not return a value
   },
 
   key: (index: number) => {
-    return sessionStorage.key(index);
+    const keys = Object.keys(store);
+    return keys[index] || null; // Return null if the index is out of bounds
   },
 
   length: () => {
-    return sessionStorage.length;
+    return Object.keys(store).length; // Return the number of items in the store
   },
 });

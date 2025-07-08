@@ -8,7 +8,7 @@ const framebus = new Framebus({
 
 export const { broadcast, on } = createBroadcasts<{
   storage: {
-    key: string;
+    key: string | null;
     newValue: string | null;
     oldValue: string | null;
   };
@@ -16,11 +16,12 @@ export const { broadcast, on } = createBroadcasts<{
 
 export const { registFunctions, functions } = createFunctions(framebus, {
   setItem: (key: string, value: string) => {
-    broadcast("storage", {
-      key: key,
-      newValue: value,
-      oldValue: localStorage.getItem(key),
-    });
+    value !== localStorage.getItem(key) &&
+      broadcast("storage", {
+        key: key,
+        newValue: value,
+        oldValue: localStorage.getItem(key),
+      });
     return localStorage.setItem(key, value);
   },
 
@@ -29,10 +30,20 @@ export const { registFunctions, functions } = createFunctions(framebus, {
   },
 
   removeItem: (key: string) => {
+    broadcast("storage", {
+      key: key,
+      newValue: null,
+      oldValue: localStorage.getItem(key),
+    });
     return localStorage.removeItem(key);
   },
 
   clear: () => {
+    broadcast("storage", {
+      key: null,
+      newValue: null,
+      oldValue: null,
+    });
     return localStorage.clear();
   },
 
