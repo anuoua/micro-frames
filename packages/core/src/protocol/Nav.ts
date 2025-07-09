@@ -12,7 +12,7 @@ export interface HistoryOptions {
   url?: string | null;
 }
 
-export const { broadcast, on } = createBroadcasts<{
+export const { emit, on } = createBroadcasts<{
   pushState: HistoryOptions;
   replaceState: HistoryOptions;
   popstate: { state: any };

@@ -16,7 +16,7 @@ export const createBroadcasts = <T extends Record<string, any>>(
     (event: keyof NeverRecords): void;
   };
 
-  const broadcast: BroadCasts = (
+  const emit: BroadCasts = (
     event: keyof T,
     data?: HasRecords[keyof HasRecords]
   ) => {
@@ -31,8 +31,13 @@ export const createBroadcasts = <T extends Record<string, any>>(
     framebus.on(event as string, callback as () => void);
   };
 
+  const off = <E extends keyof T>(event: E, callback: Callback<E>) => {
+    framebus.off(event as string, callback as () => void);
+  };
+
   return {
-    broadcast,
+    emit,
     on,
+    off,
   };
 };

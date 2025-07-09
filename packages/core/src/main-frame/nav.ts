@@ -22,7 +22,7 @@ export const hack = () => {
 
     if (ctx?.silent === false) {
       const snaphost = historyPro.historyStack[historyPro.currentHistoryIndex];
-      Nav.broadcast("pushState", snaphost);
+      Nav.emit("pushState", snaphost);
     }
   };
 
@@ -32,11 +32,11 @@ export const hack = () => {
 
     if (ctx?.silent === false) {
       const snaphost = historyPro.historyStack[historyPro.currentHistoryIndex];
-      Nav.broadcast("replaceState", snaphost);
+      Nav.emit("replaceState", snaphost);
     }
   };
 
   window.addEventListener("popstate", () => {
-    Nav.broadcast("popstate", { state: historyPro.state });
+    Nav.emit("popstate", { state: historyPro.state });
   });
 };

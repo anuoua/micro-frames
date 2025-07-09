@@ -51,7 +51,7 @@ const framebus = new Framebus({
   channel: "MCF::CookieStore",
 });
 
-export const { broadcast, on } = createBroadcasts<{
+export const { emit, on } = createBroadcasts<{
   change: {
     changed: Readonly<Array<Cookie>>;
     deleted: Readonly<Array<Cookie>>;
@@ -89,7 +89,7 @@ export const registFunctions = () => {
   window.cookieStore &&
     // @ts-expect-error
     window.cookieStore.addEventListener("change", (e) => {
-      broadcast("change", {
+      emit("change", {
         changed: e.changed,
         deleted: e.deleted,
       });

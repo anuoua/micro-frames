@@ -6,7 +6,7 @@ const framebus = new Framebus({
   channel: "MCF::SessionStore",
 });
 
-export const { broadcast, on } = createBroadcasts<{
+export const { emit, on } = createBroadcasts<{
   storage: {
     key: string | null;
     newValue: string | null;
@@ -17,7 +17,7 @@ export const { broadcast, on } = createBroadcasts<{
 export const { registFunctions, functions } = createFunctions(framebus, {
   setItem: (key: string, value: string) => {
     value !== sessionStorage.getItem(key) &&
-      broadcast("storage", {
+      emit("storage", {
         key: key,
         newValue: value,
         oldValue: sessionStorage.getItem(key),
@@ -30,7 +30,7 @@ export const { registFunctions, functions } = createFunctions(framebus, {
   },
 
   removeItem: (key: string) => {
-    broadcast("storage", {
+    emit("storage", {
       key: key,
       newValue: null,
       oldValue: sessionStorage.getItem(key),
@@ -39,7 +39,7 @@ export const { registFunctions, functions } = createFunctions(framebus, {
   },
 
   clear: () => {
-    broadcast("storage", {
+    emit("storage", {
       key: null,
       newValue: null,
       oldValue: null,

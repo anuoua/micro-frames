@@ -8,7 +8,7 @@ const framebus = new Framebus({
 
 const store: Record<string, string> = {};
 
-export const { broadcast, on } = createBroadcasts<{
+export const { emit, on } = createBroadcasts<{
   storage: {
     key: string | null;
     newValue: string | null;
@@ -25,7 +25,7 @@ export const { registFunctions, functions } = createFunctions(framebus, {
     const oldValue = store[key] || null;
     store[key] = value;
     value !== oldValue &&
-      broadcast("storage", {
+      emit("storage", {
         key: key,
         newValue: value,
         oldValue: oldValue,
@@ -40,7 +40,7 @@ export const { registFunctions, functions } = createFunctions(framebus, {
   removeItem: (key: string) => {
     const oldValue = store[key] || null;
     delete store[key];
-    broadcast("storage", {
+    emit("storage", {
       key: key,
       newValue: null,
       oldValue: oldValue,
@@ -52,7 +52,7 @@ export const { registFunctions, functions } = createFunctions(framebus, {
     for (const key in store) {
       delete store[key];
     }
-    broadcast("storage", {
+    emit("storage", {
       key: null,
       newValue: null,
       oldValue: null,
