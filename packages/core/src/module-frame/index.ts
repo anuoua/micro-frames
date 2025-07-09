@@ -1,6 +1,5 @@
 import { HistoryPro } from "../history-pro";
 import {
-  Frame,
   LocalStore,
   SessionStore,
   CookieStore2,
@@ -27,11 +26,6 @@ export const cookieStore2 = {
 export const memoryStore = {
   ...MemoryStore.functions,
   $on: MemoryStore.on,
-};
-
-export const frame = {
-  $broadcast: Frame.broadcast,
-  $on: Frame.on,
 };
 
 export const createUrl = (baseURL: string) => {

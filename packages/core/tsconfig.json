@@ -1,13 +1,6 @@
 {
+  "extends": ["../../tsconfig.json"],
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "Node",
-    "lib": ["ES2020", "DOM"],
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
     "declaration": true,
     "sourceMap": true
