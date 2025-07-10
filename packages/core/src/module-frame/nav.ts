@@ -3,6 +3,7 @@ import { resolveUrl } from "../utils/resolveUrl";
 import { createContext } from "../utils/createContext";
 import { HistoryPro, HistorySnapshot } from "../history-pro";
 import { getFullPath } from "../utils/getFullPath";
+import { CURRENT_KEY, STACK_KEYS } from "../utils/createUrl";
 
 export interface InitOptions {
   id?: string;
@@ -20,9 +21,8 @@ const context = createContext<ContextValue>({
   silent: false,
 });
 
-export const CURRENT_KEY = "hPKey";
-
-export const STACK_KEYS = "hPSKeys";
+const silentRun = <F extends (...args: any[]) => any>(fn: F) =>
+  context.runWithContextValue(fn, { silent: true });
 
 export const hack = (props: InitOptions) => {
   const options = Object.assign(
@@ -125,7 +125,8 @@ export const hack = (props: InitOptions) => {
 
   history.go = (delta) => {
     const ctx = context.getContextValue();
-    originalGo(delta!);
+    originalGo(delta);
+    if (delta === undefined) return;
     ctx?.silent === false && Nav.functions.go(delta);
   };
 
@@ -137,9 +138,8 @@ export const hack = (props: InitOptions) => {
         .includes(HistoryPro.getKey(state))
     )
       return;
-    context.runWithContextValue(history.pushState.bind(history), {
-      silent: true,
-    })(
+
+    silentRun(history.pushState.bind(history))(
       state,
       title,
       url
@@ -154,9 +154,7 @@ export const hack = (props: InitOptions) => {
     // 防止循环
     if (HistoryPro.getKey(historyPro.state) === HistoryPro.getKey(state))
       return;
-    context.runWithContextValue(history.replaceState.bind(history), {
-      silent: true,
-    })(
+    silentRun(history.replaceState.bind(history))(
       state,
       title,
       url
@@ -165,6 +163,27 @@ export const hack = (props: InitOptions) => {
           : options.fallback.replace(/\/?$/, `/${HistoryPro.getKey(state)}`)
         : url
     );
+  });
+
+  const go = ({ delta }: { delta: number }) => {
+    // 防止循环
+    if (
+      historyPro.currentHistoryIndex + delta < 0 ||
+      historyPro.currentHistoryIndex + delta >= historyPro.historyStack.length
+    )
+      return;
+
+    silentRun(history.go.bind(history))(delta);
+  };
+
+  Nav.on("go", go);
+
+  Nav.on("back", () => {
+    go({ delta: -1 });
+  });
+
+  Nav.on("forward", () => {
+    go({ delta: 1 });
   });
 
   Nav.on("popstate", ({ state }) => {
@@ -176,14 +195,7 @@ export const hack = (props: InitOptions) => {
       (item) => HistoryPro.getKey(item.state) === HistoryPro.getKey(state)
     )!;
 
-    const newFn = context.runWithContextValue(
-      history.go.bind(history) as typeof history.go,
-      {
-        silent: true,
-      }
-    );
-
-    newFn(index - historyPro.currentHistoryIndex);
+    silentRun(history.go.bind(history))(index - historyPro.currentHistoryIndex);
 
     window.dispatchEvent(
       new PopStateEvent("popstate", { state: history.state })

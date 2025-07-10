@@ -15,6 +15,9 @@ export interface HistoryOptions {
 export const { emit, on } = createBroadcasts<{
   pushState: HistoryOptions;
   replaceState: HistoryOptions;
+  back: void;
+  forward: void;
+  go: { delta: number };
   popstate: { state: any };
 }>(framebus);
 

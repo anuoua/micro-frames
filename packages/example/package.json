@@ -1,0 +1,19 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "main": "vite main --port 3000",
+    "module1": "vite module1 --port 3001",
+    "module2": "vite module2 --port 3002"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.11.0",
+  "devDependencies": {
+    "vite": "^7.0.3",
+    "@micro-frames/core": "workspace:*"
+  }
+}

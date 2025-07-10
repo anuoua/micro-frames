@@ -6,6 +6,9 @@ const context = createContext<{ silent?: boolean }>({
   silent: false,
 });
 
+const silentRun = <F extends (...args: any[]) => any>(fn: F) =>
+  context.runWithContextValue(fn, { silent: true });
+
 export const hack = () => {
   const historyPro = new HistoryPro();
 
@@ -33,6 +36,31 @@ export const hack = () => {
     if (ctx?.silent === false) {
       const snaphost = historyPro.historyStack[historyPro.currentHistoryIndex];
       Nav.emit("replaceState", snaphost);
+    }
+  };
+
+  history.go = (delta) => {
+    const ctx = context.getContextValue();
+    historyPro.go(delta);
+    if (delta === undefined) return;
+    if (ctx?.silent === false) {
+      Nav.emit("go", { delta });
+    }
+  };
+
+  history.forward = () => {
+    const ctx = context.getContextValue();
+    historyPro.forward();
+    if (ctx?.silent === false) {
+      Nav.emit("forward");
+    }
+  };
+
+  history.back = () => {
+    const ctx = context.getContextValue();
+    historyPro.back();
+    if (ctx?.silent === false) {
+      Nav.emit("back");
     }
   };
 

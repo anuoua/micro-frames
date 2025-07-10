@@ -295,7 +295,11 @@ export class HistoryPro implements History {
     }
   }
 
-  go(delta: number): void {
+  go(delta?: number): void {
+    if (delta === undefined) {
+      originalGo();
+      return;
+    }
     this.#_go(delta);
   }
 

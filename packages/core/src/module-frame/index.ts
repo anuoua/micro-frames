@@ -1,12 +1,10 @@
-import { HistoryPro } from "../history-pro";
 import {
   LocalStore,
   SessionStore,
   CookieStore2,
   MemoryStore,
 } from "../protocol";
-import { getFullPath } from "../utils/getFullPath";
-import { CURRENT_KEY, hack, InitOptions, STACK_KEYS } from "./nav";
+import { hack, InitOptions } from "./nav";
 
 export const localStore = {
   ...LocalStore.functions,
@@ -26,20 +24,6 @@ export const cookieStore2 = {
 export const memoryStore = {
   ...MemoryStore.functions,
   $on: MemoryStore.on,
-};
-
-export const createUrl = (baseURL: string) => {
-  const url = getFullPath();
-  const path = url
-    ? url.match(new RegExp(`${baseURL}\\b`))
-      ? url.replace(baseURL, "")
-      : `/404/${history.state[HistoryPro.STATE_KEY]}`
-    : url;
-  return `${path}?${CURRENT_KEY}=${
-    history.state[HistoryPro.STATE_KEY]
-  }&${STACK_KEYS}=${(history as HistoryPro).historyStack.map((i) =>
-    HistoryPro.getKey(i.state)
-  )}`;
 };
 
 export function init(options: InitOptions) {
