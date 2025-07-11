@@ -4,6 +4,7 @@ import {
   CookieStore2,
   MemoryStore,
 } from "../protocol";
+import { ModuleFrame } from "./ModuleFrame";
 import { hack, InitOptions } from "./nav";
 
 export const localStore = {
@@ -28,4 +29,6 @@ export const memoryStore = {
 
 export function init(options: InitOptions) {
   hack(options);
+
+  customElements.define("mcf-moduleframe", ModuleFrame);
 }

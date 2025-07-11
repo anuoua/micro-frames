@@ -4,7 +4,34 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      * {
+        box-sizing: border-box;
+      }
+    </style>
     <script type="module" src="./index.ts"></script>
   </head>
-  <body></body>
+  <body>
+    <mcf-mainframe header-height="60" sidebar-width="250">
+      <div slot="header">Header Content</div>
+      <div slot="sidebar">Sidebar Content</div>
+      <div slot="frames">
+        <mcf-iframe
+          name="frame1"
+          origin="https://glorious-memory-q7qr6v6r75434xpg-3001.app.github.dev/"
+          baseurl="/module/1"
+        ></mcf-iframe>
+        <mcf-iframe
+          name="frame2"
+          origin="https://glorious-memory-q7qr6v6r75434xpg-3002.app.github.dev/"
+          baseurl="/module/2"
+        ></mcf-iframe>
+      </div>
+    </mcf-mainframe>
+  </body>
 </html>

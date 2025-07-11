@@ -3,3 +3,4 @@ export * as LocalStore from "./LocalStore";
 export * as Nav from "./Nav";
 export * as CookieStore2 from "./CookieStore2";
 export * as MemoryStore from "./MemoryStore";
+export * as Frame from "./Frame";

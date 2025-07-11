@@ -4,7 +4,10 @@ import {
   CookieStore2,
   Nav,
   MemoryStore,
+  Frame,
 } from "../protocol";
+import { IFrame } from "./IFrame";
+import { MainFrame } from "./MainFrame";
 import { hack } from "./nav";
 
 export const nav = { ...Nav.functions, $on: Nav.on };
@@ -31,9 +34,14 @@ export const memoryStore = {
 
 export function init() {
   hack();
+
   LocalStore.registFunctions();
   SessionStore.registFunctions();
   Nav.registFunctions();
   CookieStore2.registFunctions();
   MemoryStore.registFunctions();
+  Frame.registFunctions();
+
+  customElements.define("mcf-mainframe", MainFrame);
+  customElements.define("mcf-iframe", IFrame);
 }

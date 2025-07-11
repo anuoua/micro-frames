@@ -1,6 +1,4 @@
-import { broadcasts } from "../protocol/wc";
-
-const css = new CSSStyleSheet();
+import { Frame } from "../protocol";
 
 const cssText = (
   headerHeight: number,
@@ -8,7 +6,7 @@ const cssText = (
   layout: "vertical" | "horizontal" = "vertical",
   headerIndex: number | string = "auto"
 ) => `
-  .framework {
+  .main-frame {
     display: grid;
     grid-template-columns: ${sidebarWidth}px 1fr;
     grid-template-rows: ${headerHeight}px 1fr;
@@ -17,51 +15,51 @@ const cssText = (
   }
   
   ::slotted([slot="header"]) {
+    display: block;
     grid-column: ${layout === "vertical" ? 1 : 2} / -1;
     grid-row: 1 / 2;
-    width: 100%;
-    height: 100%;
     z-index: ${headerIndex};
   }
   
   ::slotted([slot="sidebar"]) {
+    display: block;
     grid-column: 1;
     grid-row: ${layout === "vertical" ? 2 : 1} / -1;
-    width: 100%;
-    height: 100%;
   }
   
   ::slotted([slot="frames"]) {
     grid-column: 1 / -1;
     grid-row: 1 / -1;
-    height: 100%;
-    width: 100%;
+    min-width: 0;
+    min-height: 0;
+
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
   }
 `;
 
-class Framework extends HTMLElement {
+export class MainFrame extends HTMLElement {
   static get observedAttributes() {
     // List of attributes to observe for changes
     return ["header-height", "sidebar-width", "layout"];
   }
 
+  #style = new CSSStyleSheet();
+
+  get #props() {
+    return {
+      headerHeight: parseInt(this.getAttribute("header-height") || "0", 10),
+      sidebarWidth: parseInt(this.getAttribute("sidebar-width") || "0", 10),
+      layout:
+        (this.getAttribute("layout") as "vertical" | "horizontal") ||
+        "vertical",
+    };
+  }
+
   constructor() {
     super();
     this.#init();
-  }
-
-  get headerHeight() {
-    return parseInt(this.getAttribute("header-height") || "50", 10);
-  }
-
-  get sidebarWidth() {
-    return parseInt(this.getAttribute("sidebar-width") || "200", 10);
-  }
-
-  get layout(): "vertical" | "horizontal" {
-    return (
-      (this.getAttribute("layout") as "vertical" | "horizontal") || "vertical"
-    );
   }
 
   #init() {
@@ -72,10 +70,10 @@ class Framework extends HTMLElement {
     }
 
     this.#updateStyles();
-    this.shadowRoot.adoptedStyleSheets = [css];
+    this.shadowRoot.adoptedStyleSheets = [this.#style];
 
     this.shadowRoot.innerHTML = `
-        <div class="framework">
+        <div class="main-frame">
             <slot name="header"></slot>
             <slot name="sidebar"></slot>
             <slot name="frames"></slot>
@@ -83,11 +81,16 @@ class Framework extends HTMLElement {
     `;
   }
 
-  #updateStyles(headerIndex?: number | string) {
-    css.replaceSync(
-      cssText(this.headerHeight, this.sidebarWidth, this.layout, headerIndex)
+  #updateStyles = (headerIndex?: number | string) => {
+    this.#style.replaceSync(
+      cssText(
+        this.#props.headerHeight,
+        this.#props.sidebarWidth,
+        this.#props.layout,
+        headerIndex
+      )
     );
-  }
+  };
 
   #activeHandler = (data: { active: boolean }) => {
     if (data.active) {
@@ -98,11 +101,11 @@ class Framework extends HTMLElement {
   };
 
   connectedCallback() {
-    broadcasts.on("active-main", this.#activeHandler);
+    Frame.on("active-main", this.#activeHandler);
   }
 
   disconnectedCallback() {
-    broadcasts.off("active-main", this.#activeHandler);
+    Frame.off("active-main", this.#activeHandler);
   }
 
   attributeChangedCallback(
@@ -116,18 +119,7 @@ class Framework extends HTMLElement {
       name === "layout"
     ) {
       this.#updateStyles();
-      broadcasts.emit("update-framework", {
-        headerHeight: this.headerHeight,
-        sidebarWidth: this.sidebarWidth,
-        layout: this.layout,
-      });
+      Frame.emit("update-frame", this.#props);
     }
   }
-
-  adoptedCallback() {
-    // This method is called when the element is moved to a new document
-    console.log("Framework component adopted to a new document.");
-  }
 }
-
-customElements.define("mcf-framework", Framework);
