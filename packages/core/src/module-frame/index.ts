@@ -3,6 +3,7 @@ import {
   SessionStore,
   CookieStore2,
   MemoryStore,
+  Frame,
 } from "../protocol";
 import { webComponentFrames } from "../utils/webComponentFrames";
 import { ModuleFrame } from "./ModuleFrame";
@@ -26,6 +27,11 @@ export const cookieStore2 = {
 export const memoryStore = {
   ...MemoryStore.functions,
   $on: MemoryStore.on,
+};
+
+export const frame = {
+  ...Frame.functions,
+  $on: Frame.on,
 };
 
 export function init(options: InitOptions) {

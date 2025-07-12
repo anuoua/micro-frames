@@ -33,6 +33,10 @@ export const memoryStore = {
   $on: MemoryStore.on,
 };
 
+export const frame = {
+  $on: Frame.on,
+};
+
 export function init() {
   webComponentFrames();
 
