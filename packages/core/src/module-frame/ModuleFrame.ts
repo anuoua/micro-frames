@@ -42,17 +42,48 @@ export class ModuleFrame extends HTMLElement {
       <div class="module-frame">
         <slot name="header"></slot>
         <slot name="sidebar"></slot>
-        <slot style="display: block;"></slot>
+        <slot content style="display: block;"></slot>
       </div>
     `;
 
     this.#updateStyles();
+
+    this.#bindEvent();
 
     Frame.functions.getMainFrameConfigs().then((config) => {
       this.#state = config;
       this.#updateStyles();
     });
   }
+
+  #bindEvent = () => {
+    this.shadowRoot!.querySelector('slot[name="header"]')?.addEventListener(
+      "mouseover",
+      () => {
+        Frame.emit("active-main", {
+          active: true,
+        });
+      }
+    );
+
+    this.shadowRoot!.querySelector('slot[name="sidebar"]')?.addEventListener(
+      "mouseover",
+      () => {
+        Frame.emit("active-main", {
+          active: true,
+        });
+      }
+    );
+
+    this.shadowRoot!.querySelector("slot[content]")?.addEventListener(
+      "mouseover",
+      () => {
+        Frame.emit("active-main", {
+          active: false,
+        });
+      }
+    );
+  };
 
   #updateStyles = () => {
     this.#style.replaceSync(
@@ -68,8 +99,6 @@ export class ModuleFrame extends HTMLElement {
     sidebarWidth: number;
     layout: "vertical" | "horizontal";
   }) => {
-    console.log("updateFrameHandler");
-
     this.#state = {
       headerHeight,
       sidebarWidth,

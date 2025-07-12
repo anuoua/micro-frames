@@ -4,6 +4,7 @@ import {
   CookieStore2,
   MemoryStore,
 } from "../protocol";
+import { webComponentFrames } from "../utils/webComponentFrames";
 import { ModuleFrame } from "./ModuleFrame";
 import { hack, InitOptions } from "./nav";
 
@@ -28,6 +29,8 @@ export const memoryStore = {
 };
 
 export function init(options: InitOptions) {
+  webComponentFrames();
+
   hack(options);
 
   customElements.define("mcf-moduleframe", ModuleFrame);

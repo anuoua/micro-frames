@@ -15,26 +15,14 @@ export interface HistoryOptions {
 export const { emit, on } = createBroadcasts<{
   pushState: HistoryOptions;
   replaceState: HistoryOptions;
-  back: void;
-  forward: void;
-  go: { delta: number };
+  back: { key: string };
+  forward: { key: string };
+  go: { delta: number; key: string };
   popstate: { state: any };
 }>(framebus);
 
 export const { registFunctions, functions } = createFunctions(framebus, {
-  pushState: (state: any, title: string, url?: string | null) => {
-    history.pushState(state, title, url);
-  },
-  replaceState: (state: any, title: string, url?: string | null) => {
-    history.replaceState(state, title, url);
-  },
-  back: () => {
-    history.back();
-  },
-  forward: () => {
-    history.forward();
-  },
-  go: (delta?: number) => {
-    history.go(delta);
+  getHistoryProState: () => {
+    return {};
   },
 });

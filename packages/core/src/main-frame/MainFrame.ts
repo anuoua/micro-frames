@@ -25,6 +25,7 @@ const cssText = (
     display: block;
     grid-column: 1;
     grid-row: ${layout === "vertical" ? 2 : 1} / -1;
+    z-index: ${headerIndex};
   }
   
   ::slotted([slot="frames"]) {
@@ -94,7 +95,7 @@ export class MainFrame extends HTMLElement {
 
   #activeHandler = (data: { active: boolean }) => {
     if (data.active) {
-      this.#updateStyles(1);
+      this.#updateStyles(3);
     } else {
       this.#updateStyles();
     }

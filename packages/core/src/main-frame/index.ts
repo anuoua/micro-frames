@@ -6,6 +6,7 @@ import {
   MemoryStore,
   Frame,
 } from "../protocol";
+import { webComponentFrames } from "../utils/webComponentFrames";
 import { IFrame } from "./IFrame";
 import { MainFrame } from "./MainFrame";
 import { hack } from "./nav";
@@ -33,6 +34,8 @@ export const memoryStore = {
 };
 
 export function init() {
+  webComponentFrames();
+
   hack();
 
   LocalStore.registFunctions();

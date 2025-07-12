@@ -85,61 +85,74 @@ export const hack = (props: InitOptions) => {
   const originalForward = historyPro.forward.bind(historyPro);
   const originalGo = historyPro.go.bind(historyPro);
 
-  history.pushState = (state, title, url) => {
+  historyPro.pushState = (state, title, url) => {
     const ctx = context.getContextValue();
 
     originalPushState(state, title, url);
 
-    ctx?.silent === false &&
-      Nav.functions.pushState(
-        history.state,
-        title,
-        resolveUrl(url, options.baseURL)
-      );
+    if (ctx?.silent) return;
+
+    Nav.emit("pushState", {
+      state: historyPro.state,
+      title,
+      url: resolveUrl(url, options.baseURL),
+    });
   };
 
-  history.replaceState = (state, title, url) => {
+  historyPro.replaceState = (state, title, url) => {
     const ctx = context.getContextValue();
 
     originalReplaceState(state, title, url);
 
-    ctx?.silent === false &&
-      Nav.functions.replaceState(
-        history.state,
-        title,
-        resolveUrl(url, options.baseURL)
-      );
+    if (ctx?.silent) return;
+
+    Nav.emit("replaceState", {
+      state: historyPro.state,
+      title,
+      url: resolveUrl(url, options.baseURL),
+    });
   };
 
-  history.back = () => {
+  historyPro.back = () => {
     const ctx = context.getContextValue();
+
     originalBack();
-    ctx?.silent === false && Nav.functions.back();
+
+    if (ctx?.silent) return;
+
+    Nav.emit("back", {
+      key: historyPro.getKey(),
+    });
   };
 
-  history.forward = () => {
+  historyPro.forward = () => {
     const ctx = context.getContextValue();
+
     originalForward();
-    ctx?.silent === false && Nav.functions.forward();
+
+    if (ctx?.silent) return;
+
+    Nav.emit("forward", {
+      key: historyPro.getKey(),
+    });
   };
 
-  history.go = (delta) => {
+  historyPro.go = (delta) => {
     const ctx = context.getContextValue();
+
     originalGo(delta);
+
     if (delta === undefined) return;
-    ctx?.silent === false && Nav.functions.go(delta);
+    if (ctx?.silent) return;
+
+    Nav.emit("go", { key: historyPro.getKey(), delta });
   };
 
   Nav.on("pushState", ({ state, title, url }) => {
     // 防止循环
-    if (
-      historyPro.historyStack
-        .map((i) => HistoryPro.getKey(i.state))
-        .includes(HistoryPro.getKey(state))
-    )
-      return;
+    if (historyPro.getKey() === HistoryPro.getKey(state)) return;
 
-    silentRun(history.pushState.bind(history))(
+    silentRun(historyPro.pushState)(
       state,
       title,
       url
@@ -152,9 +165,9 @@ export const hack = (props: InitOptions) => {
 
   Nav.on("replaceState", ({ state, title, url }) => {
     // 防止循环
-    if (HistoryPro.getKey(historyPro.state) === HistoryPro.getKey(state))
-      return;
-    silentRun(history.replaceState.bind(history))(
+    if (historyPro.getKey() === HistoryPro.getKey(state)) return;
+
+    silentRun(historyPro.replaceState)(
       state,
       title,
       url
@@ -165,40 +178,38 @@ export const hack = (props: InitOptions) => {
     );
   });
 
-  const go = ({ delta }: { delta: number }) => {
-    // 防止循环
-    if (
-      historyPro.currentHistoryIndex + delta < 0 ||
-      historyPro.currentHistoryIndex + delta >= historyPro.historyStack.length
-    )
-      return;
+  Nav.on("go", ({ delta, key }: { delta: number; key: string }) => {
+    if (key === historyPro.getKey()) return;
 
-    silentRun(history.go.bind(history))(delta);
-  };
-
-  Nav.on("go", go);
-
-  Nav.on("back", () => {
-    go({ delta: -1 });
+    silentRun(historyPro.go)(delta);
   });
 
-  Nav.on("forward", () => {
-    go({ delta: 1 });
+  Nav.on("back", ({ key }) => {
+    if (key === historyPro.getKey()) return;
+
+    silentRun(historyPro.back)();
+  });
+
+  Nav.on("forward", ({ key }) => {
+    if (key === historyPro.getKey()) return;
+
+    silentRun(historyPro.forward)();
   });
 
   Nav.on("popstate", ({ state }) => {
+    console.log("popstate", state);
+
     // 防止循环
-    if (HistoryPro.getKey(historyPro.state) === HistoryPro.getKey(state))
-      return;
+    if (historyPro.getKey() === HistoryPro.getKey(state)) return;
 
     const index = historyPro.historyStack.findIndex(
       (item) => HistoryPro.getKey(item.state) === HistoryPro.getKey(state)
     )!;
 
-    silentRun(history.go.bind(history))(index - historyPro.currentHistoryIndex);
+    silentRun(historyPro.go)(index - historyPro.currentHistoryIndex);
 
     window.dispatchEvent(
-      new PopStateEvent("popstate", { state: history.state })
+      new PopStateEvent("popstate", { state: historyPro.state })
     );
   });
 };
