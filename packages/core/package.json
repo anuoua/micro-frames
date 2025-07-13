@@ -1,5 +1,5 @@
 {
-  "name": "@micro-frames/core",
+  "name": "micro-frames",
   "version": "0.0.0",
   "description": "Iframe based micro front end framework",
   "scripts": {
@@ -35,7 +35,7 @@
     }
   },
   "packageManager": "pnpm@10.11.0",
-  "peerDependencies": {
+  "devDependencies": {
     "framebus": "^6.0.3"
   }
 }

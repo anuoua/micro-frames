@@ -13,28 +13,19 @@ importers:
         version: 5.8.3
 
   packages/core:
-    dependencies:
+    devDependencies:
       framebus:
         specifier: ^6.0.3
         version: 6.0.3
 
   packages/example:
     devDependencies:
-      '@micro-frames/core':
+      micro-frames:
         specifier: workspace:*
         version: link:../core
       vite:
         specifier: ^7.0.3
         version: 7.0.3
-
-  packages/wc:
-    dependencies:
-      '@micro-frames/core':
-        specifier: workspace:*
-        version: link:../core
-      framebus:
-        specifier: ^6.0.3
-        version: 6.0.3
 
 packages:
 

@@ -1,3 +1,3 @@
-import * as mainFrame from "@micro-frames/core/main-frame";
+import * as mainFrame from "micro-frames/main-frame";
 
 mainFrame.init();

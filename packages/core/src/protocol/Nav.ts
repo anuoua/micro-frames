@@ -22,7 +22,14 @@ export const { emit, on } = createBroadcasts<{
 }>(framebus);
 
 export const { registFunctions, functions } = createFunctions(framebus, {
-  getHistoryProState: () => {
-    return {};
+  mainPushState: (state: any, title: string, url: string) => {
+    history.pushState(state, title, url);
   },
+  mainOpen: (url?: string | URL, target?: string, features?: string) => {
+    window.open(url, target, features);
+  },
+  mainHref: (href: string) => {
+    window.location.href = href;
+  },
+  mainGetHistoryProState: () => {},
 });

@@ -4,6 +4,7 @@ import {
   CookieStore2,
   MemoryStore,
   Frame,
+  Nav,
 } from "../protocol";
 import { webComponentFrames } from "../utils/webComponentFrames";
 import { ModuleFrame } from "./ModuleFrame";
@@ -32,6 +33,10 @@ export const memoryStore = {
 export const frame = {
   ...Frame.functions,
   $on: Frame.on,
+};
+
+export const nav = {
+  ...Nav.functions,
 };
 
 export function init(options: InitOptions) {

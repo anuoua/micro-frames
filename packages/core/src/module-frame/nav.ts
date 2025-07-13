@@ -79,6 +79,9 @@ export const hack = (props: InitOptions) => {
     value: historyPro,
   });
 
+  // @ts-expect-error
+  window.historyPro = historyPro;
+
   const originalPushState = historyPro.pushState.bind(historyPro);
   const originalReplaceState = historyPro.replaceState.bind(historyPro);
   const originalBack = historyPro.back.bind(historyPro);
