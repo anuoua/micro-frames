@@ -72,7 +72,7 @@ export class IFrame extends HTMLElement {
     oldValue: string | null,
     newValue: string | null
   ) {
-    if (name === "src" || name === "baseurl") {
+    if (name === "origin" || name === "baseurl") {
       this.#updateIframe();
     }
 
