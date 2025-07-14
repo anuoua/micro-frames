@@ -3,22 +3,14 @@ export const resolveUrl = (
   baseUrl: string
 ) => {
   const baseChunks = baseUrl.split("/").filter((i) => !!i);
-  baseUrl = `/${baseChunks.join("/")}`;
 
-  if (!targetUrl) return baseUrl;
+  if (!targetUrl) return `/${baseChunks.join("/")}`;
 
-  if (targetUrl instanceof URL) {
-    const newTargetUrl = new URL(targetUrl);
-    newTargetUrl.pathname = `${baseUrl}/${targetUrl.pathname}`;
-    return `${newTargetUrl.pathname}${newTargetUrl.search}${newTargetUrl.hash}}`;
-  }
+  const resolvedUrl = new URL(targetUrl, location.href);
 
-  if (targetUrl.startsWith("/")) {
-    return `${baseUrl}${targetUrl}`;
-  }
+  const prefix = "/" + baseChunks.join("/");
 
-  return `${baseUrl}/${targetUrl
-    .split("/")
-    .filter((i) => !!i && i !== ".")
-    .join("/")}`;
+  return `${prefix === "/" ? "" : prefix}${resolvedUrl.pathname}${
+    resolvedUrl.search
+  }${resolvedUrl.hash}`;
 };
