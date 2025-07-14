@@ -51,7 +51,7 @@ const framebus = new Framebus({
   channel: "MCF::CookieStore",
 });
 
-export const { emit, on } = createBroadcasts<{
+export const { emit, on, off } = createBroadcasts<{
   change: {
     changed: Readonly<Array<Cookie>>;
     deleted: Readonly<Array<Cookie>>;

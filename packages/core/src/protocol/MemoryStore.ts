@@ -8,7 +8,7 @@ const framebus = new Framebus({
 
 const store: Record<string, string> = {};
 
-export const { emit, on } = createBroadcasts<{
+export const { emit, on, off } = createBroadcasts<{
   storage: {
     key: string | null;
     newValue: string | null;
