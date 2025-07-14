@@ -38,13 +38,18 @@ export class IFrame extends HTMLElement {
 
     this.#updateStyle(this.getAttribute("active") !== null);
     this.shadowRoot.adoptedStyleSheets = [css, this.#style];
+    this.#updateIframe();
+  }
 
-    const url = createUrl(
-      this.getAttribute("origin")!,
-      this.getAttribute("baseurl") || "/"
-    );
+  #updateIframe() {
+    const url = this.getAttribute("origin")
+      ? createUrl(
+          this.getAttribute("origin")!,
+          this.getAttribute("baseurl") || "/"
+        )
+      : undefined;
 
-    this.shadowRoot.innerHTML = `
+    this.shadowRoot!.innerHTML = `
         <iframe src="${url}"></iframe>
     `;
   }
@@ -68,14 +73,7 @@ export class IFrame extends HTMLElement {
     newValue: string | null
   ) {
     if (name === "src" || name === "baseurl") {
-      const url = createUrl(
-        this.getAttribute("origin")!,
-        this.getAttribute("baseurl") || "/"
-      );
-
-      this.shadowRoot!.innerHTML = `
-          <iframe src="${url}"></iframe>
-      `;
+      this.#updateIframe();
     }
 
     if (name === "active") {
