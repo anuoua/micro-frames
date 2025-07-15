@@ -95,7 +95,7 @@ export const hack = (props: InitOptions) => {
 
     if (ctx?.silent) return;
 
-    Nav.emit("pushState", {
+    Nav.$emit("pushState", {
       state: historyPro.state,
       title,
       url: resolveUrl(url, options.baseURL),
@@ -109,7 +109,7 @@ export const hack = (props: InitOptions) => {
 
     if (ctx?.silent) return;
 
-    Nav.emit("replaceState", {
+    Nav.$emit("replaceState", {
       state: historyPro.state,
       title,
       url: resolveUrl(url, options.baseURL),
@@ -123,7 +123,7 @@ export const hack = (props: InitOptions) => {
 
     if (ctx?.silent) return;
 
-    Nav.emit("back", {
+    Nav.$emit("back", {
       key: historyPro.getKey(),
     });
   };
@@ -135,7 +135,7 @@ export const hack = (props: InitOptions) => {
 
     if (ctx?.silent) return;
 
-    Nav.emit("forward", {
+    Nav.$emit("forward", {
       key: historyPro.getKey(),
     });
   };
@@ -148,10 +148,10 @@ export const hack = (props: InitOptions) => {
     if (delta === undefined) return;
     if (ctx?.silent) return;
 
-    Nav.emit("go", { key: historyPro.getKey(), delta });
+    Nav.$emit("go", { key: historyPro.getKey(), delta });
   };
 
-  Nav.on("pushState", ({ state, title, url }) => {
+  Nav.$on("pushState", ({ state, title, url }) => {
     // 防止循环
     if (historyPro.getKey() === HistoryPro.getKey(state)) return;
 
@@ -166,7 +166,7 @@ export const hack = (props: InitOptions) => {
     );
   });
 
-  Nav.on("replaceState", ({ state, title, url }) => {
+  Nav.$on("replaceState", ({ state, title, url }) => {
     // 防止循环
     if (historyPro.getKey() === HistoryPro.getKey(state)) return;
 
@@ -181,25 +181,25 @@ export const hack = (props: InitOptions) => {
     );
   });
 
-  Nav.on("go", ({ delta, key }: { delta: number; key: string }) => {
+  Nav.$on("go", ({ delta, key }: { delta: number; key: string }) => {
     if (key === historyPro.getKey()) return;
 
     silentRun(historyPro.go)(delta);
   });
 
-  Nav.on("back", ({ key }) => {
+  Nav.$on("back", ({ key }) => {
     if (key === historyPro.getKey()) return;
 
     silentRun(historyPro.back)();
   });
 
-  Nav.on("forward", ({ key }) => {
+  Nav.$on("forward", ({ key }) => {
     if (key === historyPro.getKey()) return;
 
     silentRun(historyPro.forward)();
   });
 
-  Nav.on("popstate", ({ state }) => {
+  Nav.$on("popstate", ({ state }) => {
     console.log("popstate", state);
 
     // 防止循环

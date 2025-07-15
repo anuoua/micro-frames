@@ -69,3 +69,11 @@ export const { registFunctions, functions } = createFunctions(framebus, {
     return Object.keys(store).length; // Return the number of items in the store
   },
 });
+
+export const MemoryStore = {
+  $emit: emit,
+  $on: on,
+  $off: off,
+  registFunctions,
+  ...functions,
+};

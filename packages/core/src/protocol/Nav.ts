@@ -33,3 +33,11 @@ export const { registFunctions, functions } = createFunctions(framebus, {
   },
   mainGetHistoryProState: () => {},
 });
+
+export const Nav = {
+  $emit: emit,
+  $on: on,
+  $off: off,
+  registFunctions,
+  ...functions,
+};

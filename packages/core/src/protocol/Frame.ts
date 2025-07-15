@@ -26,3 +26,11 @@ export const { registFunctions, functions } = createFunctions(framebus, {
     };
   },
 });
+
+export const Frame = {
+  $emit: emit,
+  $on: on,
+  $off: off,
+  registFunctions,
+  ...functions,
+};

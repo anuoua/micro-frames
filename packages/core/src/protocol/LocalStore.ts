@@ -55,3 +55,11 @@ export const { registFunctions, functions } = createFunctions(framebus, {
     return localStorage.length;
   },
 });
+
+export const LocalStore = {
+  $emit: emit,
+  $on: on,
+  $off: off,
+  registFunctions,
+  ...functions,
+};

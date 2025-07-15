@@ -50,7 +50,7 @@ export class ModuleFrame extends HTMLElement {
 
     this.#bindEvent();
 
-    Frame.functions.getMainFrameConfigs().then((config) => {
+    Frame.getMainFrameConfigs().then((config) => {
       this.#state = config;
       this.#updateStyles();
     });
@@ -60,7 +60,7 @@ export class ModuleFrame extends HTMLElement {
     this.shadowRoot!.querySelector('slot[name="header"]')?.addEventListener(
       "mouseover",
       () => {
-        Frame.emit("active-main", {
+        Frame.$emit("active-main", {
           active: true,
         });
       }
@@ -69,7 +69,7 @@ export class ModuleFrame extends HTMLElement {
     this.shadowRoot!.querySelector('slot[name="sidebar"]')?.addEventListener(
       "mouseover",
       () => {
-        Frame.emit("active-main", {
+        Frame.$emit("active-main", {
           active: true,
         });
       }
@@ -78,7 +78,7 @@ export class ModuleFrame extends HTMLElement {
     this.shadowRoot!.querySelector("slot[content]")?.addEventListener(
       "mouseover",
       () => {
-        Frame.emit("active-main", {
+        Frame.$emit("active-main", {
           active: false,
         });
       }
@@ -107,10 +107,10 @@ export class ModuleFrame extends HTMLElement {
   };
 
   connectedCallback() {
-    Frame.on("update-frame", this.#updateFrameHandler);
+    Frame.$on("update-frame", this.#updateFrameHandler);
   }
 
   disconnectedCallback() {
-    Frame.off("update-frame", this.#updateFrameHandler);
+    Frame.$off("update-frame", this.#updateFrameHandler);
   }
 }

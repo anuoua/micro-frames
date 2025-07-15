@@ -1,6 +1,6 @@
-export * as SessionStore from "./SessionStore";
-export * as LocalStore from "./LocalStore";
-export * as Nav from "./Nav";
-export * as CookieStore2 from "./CookieStore2";
-export * as MemoryStore from "./MemoryStore";
-export * as Frame from "./Frame";
+export { SessionStore } from "./SessionStore";
+export { LocalStore } from "./LocalStore";
+export { Nav } from "./Nav";
+export { CookieStore2 } from "./CookieStore2";
+export { MemoryStore } from "./MemoryStore";
+export { Frame } from "./Frame";

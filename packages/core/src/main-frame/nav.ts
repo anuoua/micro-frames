@@ -32,7 +32,7 @@ export const hack = () => {
     if (ctx?.silent) return;
 
     const snaphost = historyPro.historyStack[historyPro.currentHistoryIndex];
-    Nav.emit("pushState", snaphost);
+    Nav.$emit("pushState", snaphost);
   };
 
   historyPro.replaceState = (state, title, url) => {
@@ -42,7 +42,7 @@ export const hack = () => {
     if (ctx?.silent) return;
 
     const snaphost = historyPro.historyStack[historyPro.currentHistoryIndex];
-    Nav.emit("replaceState", snaphost);
+    Nav.$emit("replaceState", snaphost);
   };
 
   historyPro.go = (delta) => {
@@ -50,55 +50,55 @@ export const hack = () => {
     originalGo(delta);
     if (delta === undefined) return;
     if (ctx?.silent) return;
-    Nav.emit("go", { delta, key: historyPro.getKey() });
+    Nav.$emit("go", { delta, key: historyPro.getKey() });
   };
 
   historyPro.forward = () => {
     const ctx = context.getContextValue();
     originalForward();
     if (ctx?.silent) return;
-    Nav.emit("forward", { key: historyPro.getKey() });
+    Nav.$emit("forward", { key: historyPro.getKey() });
   };
 
   historyPro.back = () => {
     const ctx = context.getContextValue();
     originalBack();
     if (ctx?.silent) return;
-    Nav.emit("back", { key: historyPro.getKey() });
+    Nav.$emit("back", { key: historyPro.getKey() });
   };
 
-  Nav.on("pushState", ({ state, title, url }) => {
+  Nav.$on("pushState", ({ state, title, url }) => {
     // 防止循环
     if (historyPro.getKey() === HistoryPro.getKey(state)) return;
 
     historyPro.pushState(state, title, url);
   });
 
-  Nav.on("replaceState", ({ state, title, url }) => {
+  Nav.$on("replaceState", ({ state, title, url }) => {
     // 防止循环
     if (historyPro.getKey() === HistoryPro.getKey(state)) return;
     historyPro.replaceState(state, title, url);
   });
 
-  Nav.on("go", ({ delta, key }: { delta: number; key: string }) => {
+  Nav.$on("go", ({ delta, key }: { delta: number; key: string }) => {
     if (key === historyPro.getKey()) return;
 
     historyPro.go(delta);
   });
 
-  Nav.on("back", ({ key }) => {
+  Nav.$on("back", ({ key }) => {
     if (key === historyPro.getKey()) return;
 
     historyPro.back();
   });
 
-  Nav.on("forward", ({ key }) => {
+  Nav.$on("forward", ({ key }) => {
     if (key === historyPro.getKey()) return;
 
     historyPro.forward();
   });
 
   window.addEventListener("popstate", () => {
-    Nav.emit("popstate", { state: historyPro.state });
+    Nav.$emit("popstate", { state: historyPro.state });
   });
 };

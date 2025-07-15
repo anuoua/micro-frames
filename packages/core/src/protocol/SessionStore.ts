@@ -14,7 +14,7 @@ export const { emit, on, off } = createBroadcasts<{
   };
 }>(framebus);
 
-export const { registFunctions, functions } = createFunctions(framebus, {
+const { registFunctions, functions } = createFunctions(framebus, {
   setItem: (key: string, value: string) => {
     value !== sessionStorage.getItem(key) &&
       emit("storage", {
@@ -55,3 +55,11 @@ export const { registFunctions, functions } = createFunctions(framebus, {
     return sessionStorage.length;
   },
 });
+
+export const SessionStore = {
+  $emit: emit,
+  $on: on,
+  $off: off,
+  registFunctions,
+  ...functions,
+};

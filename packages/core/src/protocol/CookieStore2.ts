@@ -99,3 +99,11 @@ export const registFunctions = () => {
 };
 
 export const functions = fns.functions;
+
+export const CookieStore2 = {
+  $emit: emit,
+  $on: on,
+  $off: off,
+  registFunctions,
+  ...functions,
+};

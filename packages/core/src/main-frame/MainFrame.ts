@@ -102,11 +102,11 @@ export class MainFrame extends HTMLElement {
   };
 
   connectedCallback() {
-    Frame.on("active-main", this.#activeHandler);
+    Frame.$on("active-main", this.#activeHandler);
   }
 
   disconnectedCallback() {
-    Frame.off("active-main", this.#activeHandler);
+    Frame.$off("active-main", this.#activeHandler);
   }
 
   attributeChangedCallback(
@@ -120,7 +120,7 @@ export class MainFrame extends HTMLElement {
       name === "layout"
     ) {
       this.#updateStyles();
-      Frame.emit("update-frame", this.#props);
+      Frame.$emit("update-frame", this.#props);
     }
   }
 }
