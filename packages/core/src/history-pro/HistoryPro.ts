@@ -22,8 +22,8 @@ const hrefToFullPath = (href: string) => {
 export interface HistoryProOptions {
   // 奴隶模式，历史记录仅保存在内存中，不会生成浏览器历史记录，用于微前端
   slaveMode?: {
-    // 奴隶模式下，需要一个来自主 history 的key，用于初始化
-    initKey: string;
+    // 奴隶模式下，需要一个来自主 history 的index，用于初始化
+    initIndex: number;
     // 奴隶模式下，有时候半路加载一个模块，需要补充之前缺失的栈
     initStack: HistorySnapshot[];
   };
@@ -120,51 +120,8 @@ export class HistoryPro implements History {
   }
 
   #slaveInit(slaveMode: Exclude<HistoryProOptions["slaveMode"], undefined>) {
-    const hasSession = !!sessionStorage.getItem(SESSION_HISTORY_INDEX_KEY);
-
-    this.historyStack = hasSession
-      ? (() => {
-          const sessionStack = JSON.parse(
-            sessionStorage.getItem(SESSION_HISTORY_STACK_KEY)!
-          ) as HistorySnapshot[];
-          // 融合主history的stack
-          return slaveMode.initStack.map(
-            (i) =>
-              sessionStack.find(
-                (j) => HistoryPro.getKey(i.state) === HistoryPro.getKey(j.state)
-              ) ?? i
-          );
-        })()
-      : [...slaveMode.initStack]; // 在首次加载的时候，获取主history的stack
-
-    this.currentHistoryIndex = (() => {
-      const index = this.historyStack.findIndex(
-        (i) => HistoryPro.getKey(i.state) === slaveMode.initKey
-      );
-      return index === -1 ? 0 : index;
-    })();
-
-    if (hasSession) {
-      if (slaveMode.initKey) {
-        const index = this.historyStack.findIndex(
-          (i) => HistoryPro.getKey(i.state) === slaveMode.initKey
-        );
-
-        if (index === -1) {
-          this.currentHistoryIndex++;
-          this.historyStack.splice(this.currentHistoryIndex);
-          this.historyStack[this.currentHistoryIndex] = {
-            state: {
-              [HistoryPro.STATE_KEY]: slaveMode.initKey,
-            },
-            url: hrefToFullPath(location.href),
-            title: "",
-          };
-        } else {
-          this.currentHistoryIndex = index;
-        }
-      }
-    }
+    this.historyStack = slaveMode.initStack;
+    this.currentHistoryIndex = slaveMode.initIndex;
   }
 
   #bindEvents() {
