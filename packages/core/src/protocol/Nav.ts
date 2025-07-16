@@ -1,6 +1,7 @@
 import Framebus from "framebus";
 import { createBroadcasts } from "../utils/createBroadcasts";
 import { createFunctions } from "../utils/createFunctions";
+import { HistoryPro } from "../history-pro";
 
 const framebus = new Framebus({
   channel: "MCF::Nav",
@@ -31,7 +32,13 @@ export const { registFunctions, functions } = createFunctions(framebus, {
   mainHref: (href: string) => {
     window.location.href = href;
   },
-  mainGetHistoryProState: () => {},
+  mainGetHistoryProState: () => {
+    return {
+      historyStack: ((window as any).historyPro as HistoryPro).historyStack,
+      currentHistoryIndex: ((window as any).historyPro as HistoryPro)
+        .currentHistoryIndex,
+    };
+  },
 });
 
 export const Nav = {
