@@ -9,12 +9,16 @@ import {
 import { webComponentFrames } from "../utils/webComponentFrames";
 import { IFrame } from "./IFrame";
 import { MainFrame } from "./MainFrame";
-import { hack } from "./nav";
+import { HackOptions, hack } from "./nav";
 
-export function init() {
+export type InitOptions = HackOptions;
+
+export function init(options?: InitOptions) {
   webComponentFrames();
 
-  hack();
+  hack({
+    simulatePopstate: options?.simulatePopstate ?? true,
+  });
 
   LocalStore.registFunctions();
   SessionStore.registFunctions();

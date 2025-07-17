@@ -9,6 +9,11 @@ export interface HackOptions {
   fallback: string;
   initIndex: number;
   initStack: HistorySnapshot[];
+  /**
+   * 是否在 pushState 和 replaceState 的时候触发模拟 popstate 事件
+   * 很多框架的路由库，在调用原生 history.xxx 的时候没有反应
+   */
+  simulatePopstate: boolean;
 }
 
 interface ContextValue {
@@ -25,23 +30,6 @@ const silentRun = <F extends (...args: any[]) => any>(fn: F) =>
 
 export const hack = (props: HackOptions) => {
   const options = props;
-  // const options = Object.assign(
-  //   {
-  //     baseURL: "/",
-  //     fallback: "/404",
-  //   },
-  //   props
-  // ) as Required<HackOptions>;
-
-  // options.fallback = `/${options.fallback
-  //   .split("/")
-  //   .filter((i) => !!i)
-  //   .join("/")}`;
-
-  // options.baseURL = `/${options.baseURL
-  //   .split("/")
-  //   .filter((i) => !!i)
-  //   .join("/")}`;
 
   const historyPro = new HistoryPro({
     slaveMode: {
@@ -56,6 +44,13 @@ export const hack = (props: HackOptions) => {
 
   // @ts-expect-error
   window.historyPro = historyPro;
+
+  const sendSimulatePopstate = () => {
+    if (!options.simulatePopstate) return;
+    window.dispatchEvent(
+      new PopStateEvent("popstate", { state: historyPro.state })
+    );
+  };
 
   const originalPushState = historyPro.pushState.bind(historyPro);
   const originalReplaceState = historyPro.replaceState.bind(historyPro);
@@ -139,6 +134,8 @@ export const hack = (props: HackOptions) => {
           : options.fallback.replace(/\/?$/, `/${HistoryPro.getKey(state)}`)
         : url
     );
+
+    sendSimulatePopstate();
   });
 
   Nav.$on("replaceState", ({ state, title, url }) => {
@@ -154,6 +151,8 @@ export const hack = (props: HackOptions) => {
           : options.fallback.replace(/\/?$/, `/${HistoryPro.getKey(state)}`)
         : url
     );
+
+    sendSimulatePopstate();
   });
 
   Nav.$on("go", ({ delta, key }: { delta: number; key: string }) => {
@@ -175,8 +174,6 @@ export const hack = (props: HackOptions) => {
   });
 
   Nav.$on("popstate", ({ state }) => {
-    console.log("popstate", state);
-
     // 防止循环
     if (historyPro.getKey() === HistoryPro.getKey(state)) return;
 
@@ -186,8 +183,6 @@ export const hack = (props: HackOptions) => {
 
     silentRun(historyPro.go)(index - historyPro.currentHistoryIndex);
 
-    window.dispatchEvent(
-      new PopStateEvent("popstate", { state: historyPro.state })
-    );
+    sendSimulatePopstate();
   });
 };

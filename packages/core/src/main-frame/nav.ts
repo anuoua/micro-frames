@@ -6,10 +6,15 @@ const context = createContext<{ silent?: boolean }>({
   silent: false,
 });
 
-const silentRun = <F extends (...args: any[]) => any>(fn: F) =>
-  context.runWithContextValue(fn, { silent: true });
+export interface HackOptions {
+  /**
+   * 是否在 pushState 和 replaceState 的时候触发模拟 popstate 事件
+   * 很多框架的路由库，在调用原生 history.xxx 的时候没有反应
+   */
+  simulatePopstate: boolean;
+}
 
-export const hack = () => {
+export const hack = (options: HackOptions) => {
   const historyPro = new HistoryPro();
 
   Object.defineProperty(window, "history", {
@@ -18,6 +23,13 @@ export const hack = () => {
 
   // @ts-expect-error
   window.historyPro = historyPro;
+
+  const sendSimulatePopstate = () => {
+    if (!options.simulatePopstate) return;
+    window.dispatchEvent(
+      new PopStateEvent("popstate", { state: historyPro.state })
+    );
+  };
 
   const originalPushState = historyPro.pushState.bind(historyPro);
   const originalReplaceState = historyPro.replaceState.bind(historyPro);
@@ -72,12 +84,17 @@ export const hack = () => {
     if (historyPro.getKey() === HistoryPro.getKey(state)) return;
 
     historyPro.pushState(state, title, url);
+
+    sendSimulatePopstate();
   });
 
   Nav.$on("replaceState", ({ state, title, url }) => {
     // 防止循环
     if (historyPro.getKey() === HistoryPro.getKey(state)) return;
+
     historyPro.replaceState(state, title, url);
+
+    sendSimulatePopstate();
   });
 
   Nav.$on("go", ({ delta, key }: { delta: number; key: string }) => {
