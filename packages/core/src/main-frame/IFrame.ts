@@ -1,5 +1,3 @@
-import { createUrl } from "../utils/createUrl";
-
 const css = new CSSStyleSheet();
 
 css.replaceSync(`
@@ -19,7 +17,7 @@ css.replaceSync(`
 
 export class IFrame extends HTMLElement {
   static get observedAttributes() {
-    return ["origin", "baseurl", "active"];
+    return ["src", "active"];
   }
 
   #style = new CSSStyleSheet();
@@ -42,15 +40,10 @@ export class IFrame extends HTMLElement {
   }
 
   #updateIframe() {
-    const url = this.getAttribute("origin")
-      ? createUrl(
-          this.getAttribute("origin")!,
-          this.getAttribute("baseurl") || "/"
-        )
-      : undefined;
+    const src = this.getAttribute("src");
 
     this.shadowRoot!.innerHTML = `
-        <iframe src="${url}"></iframe>
+        <iframe src="${src}"></iframe>
     `;
   }
 
@@ -72,7 +65,7 @@ export class IFrame extends HTMLElement {
     oldValue: string | null,
     newValue: string | null
   ) {
-    if (name === "origin" || name === "baseurl") {
+    if (name === "src") {
       this.#updateIframe();
     }
 
