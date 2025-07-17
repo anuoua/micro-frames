@@ -41,6 +41,8 @@ export const hack = (options: HackOptions) => {
     const ctx = context.getContextValue();
     originalPushState(state, title, url);
 
+    sendSimulatePopstate();
+
     if (ctx?.silent) return;
 
     const snaphost = historyPro.historyStack[historyPro.currentHistoryIndex];
@@ -50,6 +52,8 @@ export const hack = (options: HackOptions) => {
   historyPro.replaceState = (state, title, url) => {
     const ctx = context.getContextValue();
     originalReplaceState(state, title, url);
+
+    sendSimulatePopstate();
 
     if (ctx?.silent) return;
 
@@ -84,8 +88,6 @@ export const hack = (options: HackOptions) => {
     if (historyPro.getKey() === HistoryPro.getKey(state)) return;
 
     historyPro.pushState(state, title, url);
-
-    sendSimulatePopstate();
   });
 
   Nav.$on("replaceState", ({ state, title, url }) => {
@@ -93,8 +95,6 @@ export const hack = (options: HackOptions) => {
     if (historyPro.getKey() === HistoryPro.getKey(state)) return;
 
     historyPro.replaceState(state, title, url);
-
-    sendSimulatePopstate();
   });
 
   Nav.$on("go", ({ delta, key }: { delta: number; key: string }) => {

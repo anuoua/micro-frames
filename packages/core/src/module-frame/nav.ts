@@ -63,6 +63,8 @@ export const hack = (props: HackOptions) => {
 
     originalPushState(state, title, url);
 
+    sendSimulatePopstate();
+
     if (ctx?.silent) return;
 
     Nav.$emit("pushState", {
@@ -76,6 +78,8 @@ export const hack = (props: HackOptions) => {
     const ctx = context.getContextValue();
 
     originalReplaceState(state, title, url);
+
+    sendSimulatePopstate();
 
     if (ctx?.silent) return;
 
@@ -134,8 +138,6 @@ export const hack = (props: HackOptions) => {
           : options.fallback.replace(/\/?$/, `/${HistoryPro.getKey(state)}`)
         : url
     );
-
-    sendSimulatePopstate();
   });
 
   Nav.$on("replaceState", ({ state, title, url }) => {
@@ -151,8 +153,6 @@ export const hack = (props: HackOptions) => {
           : options.fallback.replace(/\/?$/, `/${HistoryPro.getKey(state)}`)
         : url
     );
-
-    sendSimulatePopstate();
   });
 
   Nav.$on("go", ({ delta, key }: { delta: number; key: string }) => {
