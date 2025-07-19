@@ -14,7 +14,7 @@ const cssText = (
     width: 100vw;
   }
   
-  ::slotted([slot="header"]) {
+  slot[name="header"] {
     display: block;
     grid-column: ${layout === "vertical" ? 1 : 2} / -1;
     grid-row: 1 / 2;
@@ -23,7 +23,7 @@ const cssText = (
     min-height: 0;
   }
   
-  ::slotted([slot="sidebar"]) {
+  slot[name="sidebar"] {
     display: block;
     grid-column: 1;
     grid-row: ${layout === "vertical" ? 2 : 1} / -1;
@@ -31,8 +31,15 @@ const cssText = (
     min-width: 0;
     min-height: 0;
   }
+
+  slot[name="content"] {
+    grid-column: 1 / -1;
+    grid-row: 2 / -1;
+    min-width: 0;
+    min-height: 0;
+  }
   
-  ::slotted([slot="frames"]) {
+  slot[name="frames"] {
     grid-column: 1 / -1;
     grid-row: 1 / -1;
     min-width: 0;
@@ -81,6 +88,7 @@ export class MainFrame extends HTMLElement {
         <div class="main-frame">
             <slot name="header"></slot>
             <slot name="sidebar"></slot>
+            <slot name="content"></slot>
             <slot name="frames"></slot>
         </div>
     `;
