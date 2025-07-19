@@ -10,24 +10,28 @@
         margin: 0;
         padding: 0;
       }
+
       * {
         box-sizing: border-box;
       }
     </style>
     <script type="module" src="./index.ts"></script>
   </head>
+
   <body>
     <mcf-mainframe header-height="60" sidebar-width="200">
       <div slot="header">Header Content</div>
       <div slot="sidebar">Sidebar Content</div>
+      <div slot="content" style="background: #eaf6ff; height: 100%"></div>
       <div slot="frames">
         <mcf-iframe
-          name="frame1"
+          name="module1"
           src="https://microframes-i1dv--3001--96435430.local-credentialless.webcontainer.io/module/1"
           active
         ></mcf-iframe>
+
         <mcf-iframe
-          name="frame2"
+          name="module2"
           src="https://microframes-i1dv--3002--96435430.local-credentialless.webcontainer.io/module/2"
         ></mcf-iframe>
       </div>
