@@ -19,6 +19,8 @@ const cssText = (
     grid-column: ${layout === "vertical" ? 1 : 2} / -1;
     grid-row: 1 / 2;
     z-index: ${headerIndex};
+    min-width: 0;
+    min-height: 0;
   }
   
   ::slotted([slot="sidebar"]) {
@@ -26,6 +28,8 @@ const cssText = (
     grid-column: 1;
     grid-row: ${layout === "vertical" ? 2 : 1} / -1;
     z-index: ${headerIndex};
+    min-width: 0;
+    min-height: 0;
   }
   
   ::slotted([slot="frames"]) {

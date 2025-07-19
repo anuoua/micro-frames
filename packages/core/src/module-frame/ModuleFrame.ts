@@ -13,12 +13,22 @@ const cssText = (headerHeight: number, sidebarWidth: number) => `
     display: block;
     grid-column: 1 / -1;
     grid-row: 1 / 2;
+    min-width: 0;
+    min-height: 0;
   }
   
   slot[name="sidebar"] {
     display: block;
     grid-column: 1;
     grid-row: 2 / -1;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  slot[content] {
+    display: block;
+    min-width: 0;
+    min-height: 0;
   }
 `;
 
@@ -42,7 +52,7 @@ export class ModuleFrame extends HTMLElement {
       <div class="module-frame">
         <slot name="header"></slot>
         <slot name="sidebar"></slot>
-        <slot content style="display: block;"></slot>
+        <slot content></slot>
       </div>
     `;
 
