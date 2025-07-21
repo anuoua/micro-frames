@@ -66,21 +66,18 @@ export const hack = (options: HackOptions) => {
     originalGo(delta);
     if (delta === undefined) return;
     if (ctx?.silent) return;
-    Nav.$emit("go", { delta, key: historyPro.getKey() });
   };
 
   historyPro.forward = () => {
     const ctx = context.getContextValue();
     originalForward();
     if (ctx?.silent) return;
-    Nav.$emit("forward", { key: historyPro.getKey() });
   };
 
   historyPro.back = () => {
     const ctx = context.getContextValue();
     originalBack();
     if (ctx?.silent) return;
-    Nav.$emit("back", { key: historyPro.getKey() });
   };
 
   Nav.$on("pushState", ({ state, title, url }) => {

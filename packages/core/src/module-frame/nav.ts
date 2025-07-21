@@ -47,9 +47,15 @@ export const hack = (props: HackOptions) => {
 
   const sendSimulatePopstate = () => {
     if (!options.simulatePopstate) return;
-    window.dispatchEvent(
-      new PopStateEvent("popstate", { state: historyPro.state })
-    );
+    const channel = new MessageChannel();
+    channel.port2.onmessage = () => {
+      window.dispatchEvent(
+        new PopStateEvent("popstate", {
+          state: historyPro.state,
+        })
+      );
+    };
+    channel.port1.postMessage("");
   };
 
   const originalPushState = historyPro.pushState.bind(historyPro);
@@ -182,7 +188,5 @@ export const hack = (props: HackOptions) => {
     )!;
 
     silentRun(historyPro.go)(index - historyPro.currentHistoryIndex);
-
-    sendSimulatePopstate();
   });
 };

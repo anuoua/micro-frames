@@ -244,11 +244,15 @@ export class HistoryPro implements History {
     this.#writeToSessionStorage();
 
     if (this.options.slaveMode) {
-      window.dispatchEvent(
-        new PopStateEvent("popstate", {
-          state: this.state,
-        })
-      );
+      const channel = new MessageChannel();
+      channel.port2.onmessage = () => {
+        window.dispatchEvent(
+          new PopStateEvent("popstate", {
+            state: this.state,
+          })
+        );
+      };
+      channel.port1.postMessage("");
     }
   }
 
