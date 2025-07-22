@@ -1,6 +1,7 @@
 import Framebus from "framebus";
 import { createBroadcasts } from "../utils/createBroadcasts";
 import { createFunctions } from "../utils/createFunctions";
+import { initOptions } from "../module-frame";
 
 export const framebus = new Framebus({
   channel: "MCF::Frame",
@@ -8,6 +9,7 @@ export const framebus = new Framebus({
 
 export const { emit, on, off } = createBroadcasts<{
   "active-main": { active: boolean };
+  "module-inited": initOptions;
   "update-frame": {
     headerHeight: number;
     sidebarWidth: number;

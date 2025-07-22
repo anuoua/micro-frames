@@ -1,5 +1,5 @@
 import { HistoryPro } from "../history-pro";
-import { Nav } from "../protocol";
+import { Frame, Nav } from "../protocol";
 import { ModuleFrame } from "./ModuleFrame";
 import { HackOptions, hack } from "./nav";
 
@@ -36,4 +36,6 @@ export async function init(options: initOptions) {
   });
 
   customElements.define("mcf-moduleframe", ModuleFrame);
+
+  Frame.$emit("module-inited", options);
 }

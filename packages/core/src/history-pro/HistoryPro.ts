@@ -1,3 +1,5 @@
+import { dispatchSimulatePopstate } from "../utils/dispatchSimulatePopstate";
+
 export interface HistorySnapshot {
   title: string;
   url: string | null | undefined;
@@ -244,15 +246,7 @@ export class HistoryPro implements History {
     this.#writeToSessionStorage();
 
     if (this.options.slaveMode) {
-      const channel = new MessageChannel();
-      channel.port2.onmessage = () => {
-        window.dispatchEvent(
-          new PopStateEvent("popstate", {
-            state: this.state,
-          })
-        );
-      };
-      channel.port1.postMessage("");
+      dispatchSimulatePopstate(this.state);
     }
   }
 

@@ -14,12 +14,17 @@ export interface HistoryOptions {
 }
 
 export const { emit, on, off } = createBroadcasts<{
-  pushState: HistoryOptions;
-  replaceState: HistoryOptions;
-  back: { key: string };
-  forward: { key: string };
-  go: { delta: number; key: string };
-  popstate: { state: any };
+  mainPushState: HistoryOptions;
+  mainReplaceState: HistoryOptions;
+  mainBack: { key: string };
+  mainForward: { key: string };
+  mainGo: { delta: number; key: string };
+  modulePushState: HistoryOptions;
+  moduleReplaceState: HistoryOptions;
+  moduleBack: { key: string };
+  moduleForward: { key: string };
+  moduleGo: { delta: number; key: string };
+  modulePopstate: { state: any };
 }>(framebus);
 
 export const { registFunctions, functions } = createFunctions(framebus, {
