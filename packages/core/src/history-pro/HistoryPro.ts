@@ -34,6 +34,8 @@ export interface HistoryProOptions {
 export class HistoryPro implements History {
   static STATE_KEY = "$_prokey";
 
+  static MAX_HISTORY_STACK_LENGTH = 30;
+
   static composeState = (state: any = {}) => {
     return {
       ...state,
@@ -179,6 +181,13 @@ export class HistoryPro implements History {
     );
   }
 
+  #checkLength() {
+    if (this.historyStack.length > HistoryPro.MAX_HISTORY_STACK_LENGTH) {
+      this.historyStack = this.historyStack.slice(-HistoryPro.MAX_HISTORY_STACK_LENGTH);
+      this.currentHistoryIndex = HistoryPro.MAX_HISTORY_STACK_LENGTH - 1;
+    }
+  }
+
   getKey() {
     return HistoryPro.getKey(this.state);
   }
@@ -215,6 +224,7 @@ export class HistoryPro implements History {
     } else {
       originalPushState(newSnapshot.state, unused, url);
     }
+    this.#checkLength();
     this.#writeToSessionStorage();
   }
 
