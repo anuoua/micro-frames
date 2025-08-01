@@ -168,6 +168,7 @@ export class HistoryPro implements History {
   }
 
   #writeToSessionStorage() {
+    if (this.options.slaveMode) return;
     sessionStorage.setItem(
       SESSION_HISTORY_STACK_KEY,
       JSON.stringify(this.historyStack)
