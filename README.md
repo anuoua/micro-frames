@@ -12,6 +12,7 @@
 
 在鼠标移动到页头和侧边栏的时候，将页头和侧边栏的 z-index 提高，
 高于 iframe 层，那么主应用的 UI 就可以正常操作了， 本身主应用的悬浮 UI 比如模态框等就比 iframe 层高，不会被 iframe 遮挡。
+
 当鼠标回到 iframe 内部的时候，将页头和侧边栏的 z-index 降低，iframe 将全屏覆盖显示，模块的悬浮 UI 比如模态框等不会被遮挡。
 同时，在 iframe 内部的 header 和 sidebar 区域是透明的，用于透出下层覆盖的主应用 UI。
 
@@ -37,11 +38,7 @@ import { init } from "micro-frames/main-frame";
 init();
 ```
 
-然后在应用内使用已注册的 web components，构建自己的主应用，header-height 和 side-width 为 0 时，相关部分可以隐藏。
-
-header-height 和 side-width 会同步给模块内部的 mcf-moduleframe， 保持界面布局。
-
-mcf-iframe 就是模块的 iframe ，这里的逻辑是渲染后既加载模块，active 既激活显示，你需要自定义加载逻辑和激活显示逻辑，更高级的预加载和保活也全部由你自己定义。
+初始化会 hack window.history（无感），同时注册 mcf-mainframe、mcf-iframe 两个 web component，然后使用它们构建主应用。
 
 ```html
 <mcf-mainframe header-height="50" side-width="200">
@@ -54,9 +51,21 @@ mcf-iframe 就是模块的 iframe ，这里的逻辑是渲染后既加载模块�
 </mcf-mainframe>
 ```
 
+header-height 和 side-width 为 0 时，相关部分可以隐藏。
+
+header-height 和 side-width 会同步给模块内部的 mcf-moduleframe 组件， 用于同步界面布局。
+
+mcf-iframe 就是模块的 iframe ，组件挂载后就会立即加载模块，而 active 表示当前模块激活并显示。
+
+你可以自己控制什么时候加载，什么时候激活，预加载和保活机制的实现你可以完全掌控。
+
 ## 模块
 
-模块的接入也是类似，先安装 micro-frames ，在应用启动最初阶段初始化，建议新增一个入口，因为模块初始化是异步的。
+模块的接入也是类似，先安装 micro-frames 。
+
+在应用启动最初阶段初始化，建议新增一个入口，因为模块初始化是异步的，这里使用 entry.js 表示。
+
+初始化后会 hack window.history（无感），同时会注册 mcf-moduleframe 这个 web components。
 
 ```js
 // entry.js
@@ -65,16 +74,16 @@ import { init } from "micro-frames/module-frame"
 init({ baseURL: "/module-1" }).then(() => import("./main.js"))
 ```
 
-然后在应用内使用已注册的 web components，构建自己的模块，使用 mcf-moduleframe，其内部就是不包含页头和侧边栏的内容。
+使用 mcf-moduleframe 包裹应用，里面放内容，它会自动留出页头和侧边栏的空间。
 
 > 部分应用（比如 antd pro-components 的页面布局）使用 fixed 定位，需要自己改一下样式， 一般改成 absolute 定位，再修改一些样式就能正常定位到内容区域。
 
 ```html
-<mcf-module>
+<mcf-moduleframe>
   <div>
     Content
   </div>
-</mcf-module>
+</mcf-moduleframe>
 ```
 
 ## API
