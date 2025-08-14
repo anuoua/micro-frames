@@ -45,8 +45,8 @@ init();
   <div slot="header">Header</div>
   <div slot="sidebar">Sidebar</div>
   <div slot="frames">
-    <mcf-iframe src="http://localhost:8080/" baseurl="/module-1" active></mcf-iframe>
-    <mcf-iframe src="http://localhost:8081/" baseurl="/module-2"></mcf-iframe>
+    <mcf-iframe src="http://localhost:8080/" active></mcf-iframe>
+    <mcf-iframe src="http://localhost:8081/" ></mcf-iframe>
   </div>
 </mcf-mainframe>
 ```
@@ -71,7 +71,7 @@ mcf-iframe 就是模块的 iframe ，组件挂载后就会立即加载模块，�
 // entry.js
 import { init } from "micro-frames/module-frame"
 
-init({ baseURL: "/module-1" }).then(() => import("./main.js"))
+init({ prefix: "/module-1" }).then(() => import("./main.js"))
 ```
 
 使用 mcf-moduleframe 包裹应用，里面放内容，它会自动留出页头和侧边栏的空间。

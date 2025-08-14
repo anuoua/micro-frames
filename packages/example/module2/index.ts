@@ -1,5 +1,5 @@
 import * as moduleFrame from "micro-frames/module-frame";
 
 moduleFrame.init({
-  baseURL: "/module/2",
+  prefix: "/module/2",
 });

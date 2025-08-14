@@ -4,7 +4,7 @@ import { ModuleFrame } from "./ModuleFrame";
 import { HackOptions, hack } from "./nav";
 
 export type initOptions = Partial<
-  Pick<HackOptions, "baseURL" | "fallback" | "simulatePopstate">
+  Pick<HackOptions, "prefix" | "fallback" | "simulatePopstate">
 >;
 
 export async function init(options: initOptions) {
@@ -13,7 +13,7 @@ export async function init(options: initOptions) {
     .filter((i) => !!i)
     .join("/")}`;
 
-  const baseURL = `/${(options.baseURL ?? "/")
+  const prefix = `/${(options.prefix ?? "/")
     .split("/")
     .filter((i) => !!i)
     .join("/")}`;
@@ -22,14 +22,14 @@ export async function init(options: initOptions) {
 
   hack({
     fallback,
-    baseURL,
+    prefix: prefix,
     simulatePopstate: options.simulatePopstate ?? true,
     initIndex: state.currentHistoryIndex,
     initStack: state.historyStack.map((i) => ({
       ...i,
       url: i.url
-        ? new RegExp("^" + baseURL + "\\b").test(i.url)
-          ? i.url.replace(baseURL, "") || "/"
+        ? new RegExp("^" + prefix + "\\b").test(i.url)
+          ? i.url.replace(prefix, "") || "/"
           : `${fallback}/${i.state[HistoryPro.STATE_KEY]}`
         : i.url,
     })),

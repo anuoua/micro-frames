@@ -5,8 +5,8 @@ import { HistoryPro, HistorySnapshot } from "../history-pro";
 import { dispatchSimulatePopstate } from "../utils/dispatchSimulatePopstate";
 
 export interface HackOptions {
-  baseURL: string;
-  // 当baseURL和主路由冲突时，使用fallback作为当前路由
+  prefix: string;
+  // 当prefix和主路由冲突时，使用fallback作为当前路由
   fallback: string;
   initIndex: number;
   initStack: HistorySnapshot[];
@@ -69,7 +69,7 @@ export const hack = (props: HackOptions) => {
     Nav.$emit("mainPushState", {
       state: historyPro.state,
       title,
-      url: resolveUrl(url, options.baseURL),
+      url: resolveUrl(url, options.prefix),
     });
   };
 
@@ -85,7 +85,7 @@ export const hack = (props: HackOptions) => {
     Nav.$emit("mainReplaceState", {
       state: historyPro.state,
       title,
-      url: resolveUrl(url, options.baseURL),
+      url: resolveUrl(url, options.prefix),
     });
   };
 
@@ -132,8 +132,8 @@ export const hack = (props: HackOptions) => {
       state,
       title,
       url
-        ? url.match(new RegExp(`${options.baseURL}\\b`))
-          ? url.replace(options.baseURL, "")
+        ? url.match(new RegExp(`${options.prefix}\\b`))
+          ? url.replace(options.prefix, "")
           : options.fallback.replace(/\/?$/, `/${HistoryPro.getKey(state)}`)
         : url
     );
@@ -147,8 +147,8 @@ export const hack = (props: HackOptions) => {
       state,
       title,
       url
-        ? url.match(new RegExp(`${options.baseURL}\\b`))
-          ? url.replace(options.baseURL, "")
+        ? url.match(new RegExp(`${options.prefix}\\b`))
+          ? url.replace(options.prefix, "")
           : options.fallback.replace(/\/?$/, `/${HistoryPro.getKey(state)}`)
         : url
     );
