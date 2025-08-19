@@ -36,11 +36,12 @@ export class HistoryPro implements History {
 
   static MAX_HISTORY_STACK_LENGTH = 30;
 
-  static composeState = (state: any = {}) => {
+  static composeState = (state: any = {}, replace?: boolean) => {
     return {
       ...state,
-      [HistoryPro.STATE_KEY]:
-        state?.[HistoryPro.STATE_KEY] ?? HistoryPro.genKey(),
+      [HistoryPro.STATE_KEY]: replace
+        ? HistoryPro.genKey()
+        : state?.[HistoryPro.STATE_KEY] ?? HistoryPro.genKey(),
     };
   };
 
@@ -183,7 +184,9 @@ export class HistoryPro implements History {
 
   #checkLength() {
     if (this.historyStack.length > HistoryPro.MAX_HISTORY_STACK_LENGTH) {
-      this.historyStack = this.historyStack.slice(-HistoryPro.MAX_HISTORY_STACK_LENGTH);
+      this.historyStack = this.historyStack.slice(
+        -HistoryPro.MAX_HISTORY_STACK_LENGTH
+      );
       this.currentHistoryIndex = HistoryPro.MAX_HISTORY_STACK_LENGTH - 1;
     }
   }
@@ -230,7 +233,7 @@ export class HistoryPro implements History {
 
   replaceState(data: any, unused: string, url?: string | URL | null): void {
     const newSnapshot: HistorySnapshot = {
-      state: HistoryPro.composeState(data),
+      state: HistoryPro.composeState(data, true),
       url: url ? (url instanceof URL ? hrefToFullPath(url.href) : url) : url,
       title: unused,
     };
