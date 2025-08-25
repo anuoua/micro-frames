@@ -1,6 +1,6 @@
 {
   "name": "micro-frames",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "Iframe based micro front end framework",
   "scripts": {
     "build": "tsc --project tsconfig.json"
