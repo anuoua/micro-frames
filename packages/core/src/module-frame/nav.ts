@@ -1,8 +1,9 @@
-import { Frame, Nav } from "../protocol";
+import { Nav } from "../protocol";
 import { resolveUrl } from "../utils/resolveUrl";
 import { createContext } from "../utils/createContext";
 import { HistoryPro, HistorySnapshot } from "../history-pro";
 import { dispatchSimulatePopstate } from "../utils/dispatchSimulatePopstate";
+import { parentBus } from "./parentBus";
 
 export interface HackOptions {
   prefix: string;
@@ -48,31 +49,27 @@ export const hack = (props: HackOptions) => {
 
   let enable = true;
 
-  Frame.$on("module-inactive", (src) => {
-    if (new URL(src).pathname.startsWith(options.prefix)) {
-      enable = false;
-    }
+  parentBus.on("module-inactive", () => {
+    enable = false;
   });
 
-  Frame.$on("module-active", (src) => {
-    if (new URL(src).pathname.startsWith(options.prefix)) {
-      enable = true;
-      Nav.mainGetHistoryProState().then((state) => {
-        historyPro.sync(
-          state.currentHistoryIndex,
-          state.historyStack.map((i) => ({
-            ...i,
-            url: i.url
-              ? new RegExp("^" + props.prefix + "\\b").test(i.url)
-                ? i.url.replace(props.prefix, "") || "/"
-                : `${props.fallback}/${i.state[HistoryPro.STATE_KEY]}`
-              : i.url,
-          }))
-        );
+  parentBus.on("module-active", () => {
+    enable = true;
+    Nav.mainGetHistoryProState().then((state) => {
+      historyPro.sync(
+        state.currentHistoryIndex,
+        state.historyStack.map((i) => ({
+          ...i,
+          url: i.url
+            ? new RegExp("^" + props.prefix + "\\b").test(i.url)
+              ? i.url.replace(props.prefix, "") || "/"
+              : `${props.fallback}/${i.state[HistoryPro.STATE_KEY]}`
+            : i.url,
+        }))
+      );
 
-        sendSimulatePopstate();
-      });
-    }
+      sendSimulatePopstate();
+    });
   });
 
   const sendSimulatePopstate = () => {

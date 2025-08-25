@@ -1,4 +1,5 @@
 import { Frame } from "../protocol";
+import { parentBus } from "./parentBus";
 
 const cssText = (headerHeight: number, sidebarWidth: number) => `
   .module-frame {
@@ -42,6 +43,8 @@ export class ModuleFrame extends HTMLElement {
   };
 
   #style = new CSSStyleSheet();
+
+  parentBus = parentBus;
 
   constructor() {
     super();

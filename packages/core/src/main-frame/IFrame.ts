@@ -1,4 +1,4 @@
-import { Frame } from "../protocol";
+import Framebus from "framebus";
 
 const css = new CSSStyleSheet();
 
@@ -23,6 +23,19 @@ export class IFrame extends HTMLElement {
   }
 
   #style = new CSSStyleSheet();
+
+  _ifarmeBus: Framebus | undefined;
+
+  get iframeBus() {
+    if (this._ifarmeBus) {
+      return this._ifarmeBus;
+    } else {
+      return new Framebus({
+        channel: "MCF:OneToOne",
+        targetFrames: [this.shadowRoot!.querySelector("iframe")!],
+      });
+    }
+  }
 
   constructor() {
     super();
@@ -58,9 +71,17 @@ export class IFrame extends HTMLElement {
     `);
   };
 
-  connectedCallback() {}
+  #getIsActive(reply: any) {
+    reply(this.getAttribute("active") != null);
+  }
 
-  disconnectedCallback() {}
+  connectedCallback() {
+    this.iframeBus.on("getIsActive", this.#getIsActive.bind(this));
+  }
+
+  disconnectedCallback() {
+    this.iframeBus.off("getIsActive", this.#getIsActive.bind(this));
+  }
 
   attributeChangedCallback(
     name: string,
@@ -74,9 +95,9 @@ export class IFrame extends HTMLElement {
     if (name === "active") {
       this.#updateStyle(newValue !== null);
       if (newValue == null) {
-        Frame.$emit("module-inactive", this.getAttribute("src")!);
+        this.iframeBus.emit("module-inactive");
       } else {
-        Frame.$emit("module-active", this.getAttribute("src")!);
+        this.iframeBus.emit("module-active");
       }
     }
   }

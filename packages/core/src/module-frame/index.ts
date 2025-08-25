@@ -2,6 +2,7 @@ import { HistoryPro } from "../history-pro";
 import { Frame, Nav } from "../protocol";
 import { ModuleFrame } from "./ModuleFrame";
 import { HackOptions, hack } from "./nav";
+import { parentBus } from "./parentBus";
 
 export type initOptions = Partial<
   Pick<HackOptions, "prefix" | "fallback" | "simulatePopstate">
@@ -22,10 +23,9 @@ export async function init(options: initOptions) {
 
   Frame.$emit("module-inited", options);
 
-  const activeIframeSrc = await Frame.getActiveIframe();
+  const isActive = await parentBus.emitAsPromise<boolean>("getIsActive");
 
-  if (activeIframeSrc && new URL(activeIframeSrc).pathname.startsWith(prefix)) {
-  } else {
+  if (!isActive) {
     await waitActive(prefix);
   }
 
@@ -49,14 +49,12 @@ export async function init(options: initOptions) {
 
 const waitActive = (prefix: string) => {
   return new Promise<boolean>((res) => {
-    let handler: (src: string) => void;
-    Frame.$on(
+    let handler: () => void;
+    parentBus.on(
       "module-active",
-      (handler = (src) => {
-        if (new URL(src).pathname.startsWith(prefix)) {
-          res(true);
-          Frame.$off("module-active", handler);
-        }
+      (handler = () => {
+        res(true);
+        parentBus.off("module-active", handler);
       })
     );
   });
