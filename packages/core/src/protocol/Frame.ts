@@ -10,6 +10,8 @@ export const framebus = new Framebus({
 export const { emit, on, off } = createBroadcasts<{
   "active-main": { active: boolean };
   "module-inited": initOptions;
+  "module-active": string;
+  "module-inactive": string;
   "update-frame": {
     headerHeight: number;
     sidebarWidth: number;
@@ -18,6 +20,10 @@ export const { emit, on, off } = createBroadcasts<{
 }>(framebus);
 
 export const { registFunctions, functions } = createFunctions(framebus, {
+  getActiveIframe() {
+    const activeIframe = document.querySelector('mcf-iframe[active]');
+    return activeIframe?.getAttribute("src");
+  },
   getMainFrameConfigs: () => {
     const frameworkElement = document.querySelector("mcf-mainframe");
     const headerHeight = frameworkElement?.getAttribute("header-height") ?? "0";

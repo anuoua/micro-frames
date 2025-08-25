@@ -18,6 +18,17 @@ export async function init(options: initOptions) {
     .filter((i) => !!i)
     .join("/")}`;
 
+  customElements.define("mcf-moduleframe", ModuleFrame);
+
+  Frame.$emit("module-inited", options);
+
+  const activeIframeSrc = await Frame.getActiveIframe();
+
+  if (activeIframeSrc && new URL(activeIframeSrc).pathname.startsWith(prefix)) {
+  } else {
+    await waitActive(prefix);
+  }
+
   const state = await Nav.mainGetHistoryProState();
 
   hack({
@@ -34,8 +45,19 @@ export async function init(options: initOptions) {
         : i.url,
     })),
   });
-
-  customElements.define("mcf-moduleframe", ModuleFrame);
-
-  Frame.$emit("module-inited", options);
 }
+
+const waitActive = (prefix: string) => {
+  return new Promise<boolean>((res) => {
+    let handler: (src: string) => void;
+    Frame.$on(
+      "module-active",
+      (handler = (src) => {
+        if (new URL(src).pathname.startsWith(prefix)) {
+          res(true);
+          Frame.$off("module-active", handler);
+        }
+      })
+    );
+  });
+};

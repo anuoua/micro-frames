@@ -1,4 +1,4 @@
-import { Nav } from "../protocol";
+import { Frame, Nav } from "../protocol";
 import { resolveUrl } from "../utils/resolveUrl";
 import { createContext } from "../utils/createContext";
 import { HistoryPro, HistorySnapshot } from "../history-pro";
@@ -46,6 +46,35 @@ export const hack = (props: HackOptions) => {
   // @ts-expect-error
   window.historyPro = historyPro;
 
+  let enable = true;
+
+  Frame.$on("module-inactive", (src) => {
+    if (new URL(src).pathname.startsWith(options.prefix)) {
+      enable = false;
+    }
+  });
+
+  Frame.$on("module-active", (src) => {
+    if (new URL(src).pathname.startsWith(options.prefix)) {
+      enable = true;
+      Nav.mainGetHistoryProState().then((state) => {
+        historyPro.sync(
+          state.currentHistoryIndex,
+          state.historyStack.map((i) => ({
+            ...i,
+            url: i.url
+              ? new RegExp("^" + props.prefix + "\\b").test(i.url)
+                ? i.url.replace(props.prefix, "") || "/"
+                : `${props.fallback}/${i.state[HistoryPro.STATE_KEY]}`
+              : i.url,
+          }))
+        );
+
+        sendSimulatePopstate();
+      });
+    }
+  });
+
   const sendSimulatePopstate = () => {
     if (!options.simulatePopstate) return;
     dispatchSimulatePopstate(historyPro.state);
@@ -64,7 +93,7 @@ export const hack = (props: HackOptions) => {
 
     sendSimulatePopstate();
 
-    if (ctx?.silent) return;
+    if (ctx?.silent && !enable) return;
 
     Nav.$emit("mainPushState", {
       state: historyPro.state,
@@ -80,7 +109,7 @@ export const hack = (props: HackOptions) => {
 
     sendSimulatePopstate();
 
-    if (ctx?.silent) return;
+    if (ctx?.silent && !enable) return;
 
     Nav.$emit("mainReplaceState", {
       state: historyPro.state,
@@ -94,7 +123,7 @@ export const hack = (props: HackOptions) => {
 
     originalBack();
 
-    if (ctx?.silent) return;
+    if (ctx?.silent && !enable) return;
 
     Nav.$emit("mainBack", {
       key: historyPro.getKey(),
@@ -106,7 +135,7 @@ export const hack = (props: HackOptions) => {
 
     originalForward();
 
-    if (ctx?.silent) return;
+    if (ctx?.silent && !enable) return;
 
     Nav.$emit("mainForward", {
       key: historyPro.getKey(),
@@ -119,12 +148,13 @@ export const hack = (props: HackOptions) => {
     originalGo(delta);
 
     if (delta === undefined) return;
-    if (ctx?.silent) return;
+    if (ctx?.silent && !enable) return;
 
     Nav.$emit("mainGo", { key: historyPro.getKey(), delta });
   };
 
   Nav.$on("modulePushState", ({ state, title, url }) => {
+    if (!enable) return;
     // 防止循环
     if (historyPro.getKey() === HistoryPro.getKey(state)) return;
 
@@ -140,6 +170,7 @@ export const hack = (props: HackOptions) => {
   });
 
   Nav.$on("moduleReplaceState", ({ state, title, url }) => {
+    if (!enable) return;
     // 防止循环
     if (historyPro.getKey() === HistoryPro.getKey(state)) return;
 
@@ -155,24 +186,28 @@ export const hack = (props: HackOptions) => {
   });
 
   Nav.$on("moduleGo", ({ delta, key }: { delta: number; key: string }) => {
+    if (!enable) return;
     if (key === historyPro.getKey()) return;
 
     silentRun(historyPro.go)(delta);
   });
 
   Nav.$on("moduleBack", ({ key }) => {
+    if (!enable) return;
     if (key === historyPro.getKey()) return;
 
     silentRun(historyPro.back)();
   });
 
   Nav.$on("moduleForward", ({ key }) => {
+    if (!enable) return;
     if (key === historyPro.getKey()) return;
 
     silentRun(historyPro.forward)();
   });
 
   Nav.$on("modulePopstate", ({ state }) => {
+    if (!enable) return;
     // 防止循环
     if (historyPro.getKey() === HistoryPro.getKey(state)) return;
 

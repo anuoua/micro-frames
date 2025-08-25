@@ -1,3 +1,5 @@
+import { Frame } from "../protocol";
+
 const css = new CSSStyleSheet();
 
 css.replaceSync(`
@@ -71,6 +73,11 @@ export class IFrame extends HTMLElement {
 
     if (name === "active") {
       this.#updateStyle(newValue !== null);
+      if (newValue == null) {
+        Frame.$emit("module-inactive", this.getAttribute("src")!);
+      } else {
+        Frame.$emit("module-active", this.getAttribute("src")!);
+      }
     }
   }
 }

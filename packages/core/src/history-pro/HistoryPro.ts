@@ -195,6 +195,19 @@ export class HistoryPro implements History {
     return HistoryPro.getKey(this.state);
   }
 
+  sync(currentHistoryIndex: number, historyStack: HistorySnapshot[]) {
+    this.currentHistoryIndex = currentHistoryIndex;
+    this.historyStack = historyStack;
+
+    this.#writeToSessionStorage();
+
+    originalReplaceState(
+      this.historyStack[this.currentHistoryIndex].state,
+      this.historyStack[this.currentHistoryIndex].title,
+      this.historyStack[this.currentHistoryIndex].url
+    );
+  }
+
   get length(): number {
     return originHistory.length;
   }
