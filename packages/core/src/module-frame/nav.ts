@@ -54,7 +54,6 @@ export const hack = (props: HackOptions) => {
   });
 
   parentBus.on("module-active", () => {
-    enable = true;
     Nav.mainGetHistoryProState().then((state) => {
       historyPro.sync(
         state.currentHistoryIndex,
@@ -69,6 +68,8 @@ export const hack = (props: HackOptions) => {
       );
 
       sendSimulatePopstate();
+
+      enable = true;
     });
   });
 
