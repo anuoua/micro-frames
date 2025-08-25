@@ -7,6 +7,9 @@ const context = createContext<{ silent?: boolean }>({
   silent: false,
 });
 
+const silentRun = <F extends (...args: any[]) => any>(fn: F) =>
+  context.runWithContextValue(fn, { silent: true });
+
 export interface HackOptions {
   /**
    * 是否在 pushState 和 replaceState 的时候触发模拟 popstate 事件
@@ -63,32 +66,32 @@ export const hack = (options: HackOptions) => {
     // 防止循环
     if (historyPro.getKey() === HistoryPro.getKey(state)) return;
 
-    historyPro.pushState(state, title, url);
+    silentRun(historyPro.pushState)(state, title, url);
   });
 
   Nav.$on("mainReplaceState", ({ state, title, url }) => {
     // 防止循环
     if (historyPro.getKey() === HistoryPro.getKey(state)) return;
 
-    historyPro.replaceState(state, title, url);
+    silentRun(historyPro.replaceState)(state, title, url);
   });
 
   Nav.$on("mainGo", ({ delta, key }: { delta: number; key: string }) => {
     if (key === historyPro.getKey()) return;
 
-    historyPro.go(delta);
+    silentRun(historyPro.go)(delta);
   });
 
   Nav.$on("mainBack", ({ key }) => {
     if (key === historyPro.getKey()) return;
 
-    historyPro.back();
+    silentRun(historyPro.back)();
   });
 
   Nav.$on("mainForward", ({ key }) => {
     if (key === historyPro.getKey()) return;
 
-    historyPro.forward();
+    silentRun(historyPro.forward)();
   });
 
   window.addEventListener("popstate", (e) => {
