@@ -77,6 +77,21 @@ export class IFrame extends HTMLElement {
 
   connectedCallback() {
     this.iframeBus.on("getIsActive", this.#getIsActive.bind(this));
+    this.iframeBus.on(
+      "mouseup",
+      (data: Omit<MouseEventInit, "relatedTarget" | "view">) =>
+        this.dispatchEvent(new MouseEvent("mouseup", data))
+    );
+    this.iframeBus.on(
+      "mousedown",
+      (data: Omit<MouseEventInit, "relatedTarget" | "view">) =>
+        this.dispatchEvent(new MouseEvent("mousedown", data))
+    );
+    this.iframeBus.on(
+      "click",
+      (data: Omit<MouseEventInit, "relatedTarget" | "view">) =>
+        this.dispatchEvent(new MouseEvent("click", data))
+    );
   }
 
   disconnectedCallback() {

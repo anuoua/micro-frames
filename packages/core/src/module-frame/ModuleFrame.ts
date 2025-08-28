@@ -1,4 +1,5 @@
 import { Frame } from "../protocol";
+import { pick } from "../utils/pick";
 import { parentBus } from "./parentBus";
 
 const cssText = (headerHeight: number, sidebarWidth: number) => `
@@ -96,6 +97,46 @@ export class ModuleFrame extends HTMLElement {
         });
       }
     );
+
+    const clone = (
+      e: MouseEvent
+    ): Omit<MouseEventInit, "relatedTarget" | "view"> =>
+      pick(e, [
+        "altKey",
+        "bubbles",
+        "button",
+        "buttons",
+        "cancelable",
+        "clientX",
+        "clientY",
+        "composed",
+        "ctrlKey",
+        "detail",
+        "metaKey",
+        "movementX",
+        "movementY",
+        "screenX",
+        "screenY",
+        "shiftKey",
+      ]);
+
+    this.addEventListener("mousedown", (e) => {
+      this.parentBus.emit("mousedown", {
+        ...clone(e),
+      } satisfies Omit<MouseEventInit, "relatedTarget" | "view">);
+    });
+
+    this.addEventListener("mouseup", (e) => {
+      this.parentBus.emit("mouseup", {
+        ...clone(e),
+      } satisfies Omit<MouseEventInit, "relatedTarget" | "view">);
+    });
+
+    this.addEventListener("click", (e) => {
+      this.parentBus.emit("click", {
+        ...clone(e),
+      } satisfies Omit<MouseEventInit, "relatedTarget" | "view">);
+    });
   };
 
   #updateStyles = () => {
