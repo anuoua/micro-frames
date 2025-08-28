@@ -2,9 +2,10 @@ export const resolveUrl = (
   targetUrl: string | URL | undefined | null,
   baseUrl: string
 ) => {
-  const baseChunks = baseUrl.split("/").filter((i) => !!i);
+  if (!targetUrl)
+    return `${location.pathname}${location.search}${location.hash}`;
 
-  if (!targetUrl) return `/${baseChunks.join("/")}`;
+  const baseChunks = baseUrl.split("/").filter((i) => !!i);
 
   const resolvedUrl = new URL(targetUrl, location.href);
 
