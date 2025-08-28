@@ -103,6 +103,8 @@ export const hack = (props: HackOptions) => {
   historyPro.replaceState = (state, title, url) => {
     const ctx = context.getContextValue();
 
+    state[HistoryPro.STATE_KEY] = HistoryPro.genKey();
+
     originalReplaceState(state, title, url);
 
     sendSimulatePopstate();

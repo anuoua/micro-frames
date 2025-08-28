@@ -36,12 +36,11 @@ export class HistoryPro implements History {
 
   static MAX_HISTORY_STACK_LENGTH = 30;
 
-  static composeState = (state: any = {}, replace?: boolean) => {
+  static composeState = (state: any = {}) => {
     return {
       ...state,
-      [HistoryPro.STATE_KEY]: replace
-        ? HistoryPro.genKey()
-        : state?.[HistoryPro.STATE_KEY] ?? HistoryPro.genKey(),
+      [HistoryPro.STATE_KEY]:
+        state?.[HistoryPro.STATE_KEY] ?? HistoryPro.genKey(),
     };
   };
 
@@ -246,7 +245,7 @@ export class HistoryPro implements History {
 
   replaceState(data: any, unused: string, url?: string | URL | null): void {
     const newSnapshot: HistorySnapshot = {
-      state: HistoryPro.composeState(data, true),
+      state: HistoryPro.composeState(data),
       url: url ? (url instanceof URL ? hrefToFullPath(url.href) : url) : url,
       title: unused,
     };
