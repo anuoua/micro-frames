@@ -8,31 +8,16 @@
   "keywords": [],
   "author": "anuoua",
   "license": "MIT",
-  "type": "module",
   "files": [
     "dist",
     "src"
   ],
   "exports": {
-    "./main-frame": {
-      "import": "./dist/main-frame/index.js",
-      "types": "./dist/main-frame/index.d.ts"
-    },
-    "./module-frame": {
-      "import": "./dist/module-frame/index.js",
-      "types": "./dist/module-frame/index.d.ts"
-    },
-    "./history-pro": {
-      "import": "./dist/history-pro/index.js",
-      "types": "./dist/history-pro/index.d.ts"
-    },
-    "./protocol": {
-      "import": "./dist/protocol/index.js",
-      "types": "./dist/protocol/index.d.ts"
-    },
-    "./utils/*": {
-      "import": "./dist/utils/*.js"
-    }
+    "./main-frame": "./dist/main-frame/index.js",
+    "./module-frame": "./dist/module-frame/index.js",
+    "./history-pro": "./dist/history-pro/index.js",
+    "./protocol": "./dist/protocol/index.js",
+    "./utils/*": "./dist/utils/*.js"
   },
   "packageManager": "pnpm@10.11.0",
   "devDependencies": {
