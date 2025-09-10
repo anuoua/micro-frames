@@ -91,7 +91,7 @@ export const hack = (props: HackOptions) => {
 
     sendSimulatePopstate();
 
-    if (ctx?.silent && !enable) return;
+    if (ctx?.silent || !enable) return;
 
     Nav.$emit("mainPushState", {
       state: historyPro.state,
@@ -109,7 +109,7 @@ export const hack = (props: HackOptions) => {
 
     sendSimulatePopstate();
 
-    if (ctx?.silent && !enable) return;
+    if (ctx?.silent || !enable) return;
 
     Nav.$emit("mainReplaceState", {
       state: historyPro.state,
@@ -123,7 +123,7 @@ export const hack = (props: HackOptions) => {
 
     originalBack();
 
-    if (ctx?.silent && !enable) return;
+    if (ctx?.silent || !enable) return;
 
     Nav.$emit("mainBack", {
       key: historyPro.getKey(),
@@ -135,7 +135,7 @@ export const hack = (props: HackOptions) => {
 
     originalForward();
 
-    if (ctx?.silent && !enable) return;
+    if (ctx?.silent || !enable) return;
 
     Nav.$emit("mainForward", {
       key: historyPro.getKey(),
@@ -148,7 +148,7 @@ export const hack = (props: HackOptions) => {
     originalGo(delta);
 
     if (delta === undefined) return;
-    if (ctx?.silent && !enable) return;
+    if (ctx?.silent || !enable) return;
 
     Nav.$emit("mainGo", { key: historyPro.getKey(), delta });
   };
