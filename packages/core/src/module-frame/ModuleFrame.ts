@@ -2,7 +2,11 @@ import { Frame } from "../protocol";
 import { pick } from "../utils/pick";
 import { parentBus } from "./parentBus";
 
-const cssText = (headerHeight: number, sidebarWidth: number, layout: "vertical" | "horizontal") => `
+const cssText = (
+  headerHeight: number,
+  sidebarWidth: number,
+  layout: "vertical" | "horizontal"
+) => `
   .module-frame {
     width: 100vw;
     height: 100vh;
@@ -42,7 +46,7 @@ export class ModuleFrame extends HTMLElement {
   } = {
     headerHeight: 0,
     sidebarWidth: 0,
-    layout: "vertical"
+    layout: "vertical",
   };
 
   #style = new CSSStyleSheet();
@@ -143,14 +147,18 @@ export class ModuleFrame extends HTMLElement {
 
   #updateStyles = () => {
     this.#style.replaceSync(
-      cssText(this.#state.headerHeight, this.#state.sidebarWidth, this.#state.layout)
+      cssText(
+        this.#state.headerHeight,
+        this.#state.sidebarWidth,
+        this.#state.layout
+      )
     );
   };
 
   #updateFrameHandler = ({
     headerHeight,
     sidebarWidth,
-    layout
+    layout,
   }: {
     headerHeight: number;
     sidebarWidth: number;
@@ -159,16 +167,16 @@ export class ModuleFrame extends HTMLElement {
     this.#state = {
       headerHeight,
       sidebarWidth,
-      layout
+      layout,
     };
     this.#updateStyles();
   };
 
   connectedCallback() {
-    Frame.$on("update-frame", this.#updateFrameHandler);
+    this.parentBus.on("update-frame", this.#updateFrameHandler as any);
   }
 
   disconnectedCallback() {
-    Frame.$off("update-frame", this.#updateFrameHandler);
+    this.parentBus.on("update-frame", this.#updateFrameHandler as any);
   }
 }

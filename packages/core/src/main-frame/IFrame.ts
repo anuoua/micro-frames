@@ -30,10 +30,12 @@ export class IFrame extends HTMLElement {
     if (this.#ifarmeBus) {
       return this.#ifarmeBus;
     } else {
-      return new Framebus({
+      this.#ifarmeBus = new Framebus({
         channel: "MCF:OneToOne",
         targetFrames: [this.shadowRoot!.querySelector("iframe")!],
       });
+
+      return this.#ifarmeBus;
     }
   }
 
@@ -76,7 +78,9 @@ export class IFrame extends HTMLElement {
   }
 
   connectedCallback() {
-    this.iframeBus.on("init", () => this.dispatchEvent(new CustomEvent("init")))
+    this.iframeBus.on("init", () =>
+      this.dispatchEvent(new CustomEvent("init"))
+    );
     this.iframeBus.on("getIsActive", this.#getIsActive.bind(this));
     this.iframeBus.on(
       "mouseup",

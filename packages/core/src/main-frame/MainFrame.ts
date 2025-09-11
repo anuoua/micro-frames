@@ -1,4 +1,5 @@
 import { Frame } from "../protocol";
+import { IFrame } from "./IFrame";
 
 const cssText = (
   headerHeight: number,
@@ -133,7 +134,10 @@ export class MainFrame extends HTMLElement {
       name === "layout"
     ) {
       this.#updateStyles();
-      Frame.$emit("update-frame", this.#props);
+      Array.from(this.querySelectorAll("mcf-iframe")).forEach((el) => {
+        (el as IFrame).iframeBus &&
+          (el as IFrame).iframeBus.emit("update-frame", this.#props);
+      });
     }
   }
 }
