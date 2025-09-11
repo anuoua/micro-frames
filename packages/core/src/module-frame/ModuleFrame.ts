@@ -2,7 +2,7 @@ import { Frame } from "../protocol";
 import { pick } from "../utils/pick";
 import { parentBus } from "./parentBus";
 
-const cssText = (headerHeight: number, sidebarWidth: number) => `
+const cssText = (headerHeight: number, sidebarWidth: number, layout: "vertical" | "horizontal") => `
   .module-frame {
     width: 100vw;
     height: 100vh;
@@ -13,7 +13,7 @@ const cssText = (headerHeight: number, sidebarWidth: number) => `
 
   slot[name="header"] {
     display: block;
-    grid-column: 1 / -1;
+    grid-column: ${layout === "vertical" ? 1 : 2} / -1;
     grid-row: 1 / 2;
     min-width: 0;
     min-height: 0;
@@ -22,7 +22,7 @@ const cssText = (headerHeight: number, sidebarWidth: number) => `
   slot[name="sidebar"] {
     display: block;
     grid-column: 1;
-    grid-row: 2 / -1;
+    grid-row: ${layout === "vertical" ? 2 : 1} / -1;
     min-width: 0;
     min-height: 0;
   }
@@ -38,9 +38,11 @@ export class ModuleFrame extends HTMLElement {
   #state: {
     headerHeight: number;
     sidebarWidth: number;
+    layout: "vertical" | "horizontal";
   } = {
     headerHeight: 0,
     sidebarWidth: 0,
+    layout: "vertical"
   };
 
   #style = new CSSStyleSheet();
@@ -141,13 +143,14 @@ export class ModuleFrame extends HTMLElement {
 
   #updateStyles = () => {
     this.#style.replaceSync(
-      cssText(this.#state.headerHeight, this.#state.sidebarWidth)
+      cssText(this.#state.headerHeight, this.#state.sidebarWidth, this.#state.layout)
     );
   };
 
   #updateFrameHandler = ({
     headerHeight,
     sidebarWidth,
+    layout
   }: {
     headerHeight: number;
     sidebarWidth: number;
@@ -156,6 +159,7 @@ export class ModuleFrame extends HTMLElement {
     this.#state = {
       headerHeight,
       sidebarWidth,
+      layout
     };
     this.#updateStyles();
   };

@@ -1,5 +1,5 @@
 import { HistoryPro } from "../history-pro";
-import { Frame, Nav } from "../protocol";
+import { Nav } from "../protocol";
 import { ModuleFrame } from "./ModuleFrame";
 import { HackOptions, hack } from "./nav";
 import { parentBus } from "./parentBus";
@@ -21,7 +21,7 @@ export async function init(options: initOptions) {
 
   customElements.define("mcf-moduleframe", ModuleFrame);
 
-  Frame.$emit("module-inited", options);
+  parentBus.emit("init");
 
   const isActive = await parentBus.emitAsPromise<boolean>("getIsActive");
 

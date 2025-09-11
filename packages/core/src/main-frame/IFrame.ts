@@ -24,11 +24,11 @@ export class IFrame extends HTMLElement {
 
   #style = new CSSStyleSheet();
 
-  _ifarmeBus: Framebus | undefined;
+  #ifarmeBus: Framebus | undefined;
 
   get iframeBus() {
-    if (this._ifarmeBus) {
-      return this._ifarmeBus;
+    if (this.#ifarmeBus) {
+      return this.#ifarmeBus;
     } else {
       return new Framebus({
         channel: "MCF:OneToOne",
@@ -76,6 +76,7 @@ export class IFrame extends HTMLElement {
   }
 
   connectedCallback() {
+    this.iframeBus.on("init", () => this.dispatchEvent(new CustomEvent("init")))
     this.iframeBus.on("getIsActive", this.#getIsActive.bind(this));
     this.iframeBus.on(
       "mouseup",
@@ -94,9 +95,7 @@ export class IFrame extends HTMLElement {
     );
   }
 
-  disconnectedCallback() {
-    this.iframeBus.off("getIsActive", this.#getIsActive.bind(this));
-  }
+  disconnectedCallback() {}
 
   attributeChangedCallback(
     name: string,
